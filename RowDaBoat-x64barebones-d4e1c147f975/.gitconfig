@@ -1,0 +1,10 @@
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+[user]
+	name = martirodriguez98
+	email = 58373738+martirodriguez98@users.noreply.github.com
+[credential]
+	helper = "!f() { /root/.vscode-server/bin/a0479759d6e9ea56afa657e454193f72aef85bd0/node /tmp/vscode-remote-containers-fe8b1a27767ac446117bbb3ed8b62b8226a43b8f.js $*; }; f"
