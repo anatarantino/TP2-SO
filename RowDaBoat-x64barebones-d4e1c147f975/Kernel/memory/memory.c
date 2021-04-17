@@ -128,21 +128,4 @@ static void blockManager(Header * left, Header * right){
     }
 }
 
-/*
-int getTotalMem(){
-    return TOTAL_MEM;
-}
-
-int getFreeMem(){
-    return TOTAL_MEM - sizeof(start);
-}
-
-int getOccuppiedMem(){
-    return sizeof(start);
-}
-void reserveMem(int size){
-    
-}
-*/
-
 #endif
