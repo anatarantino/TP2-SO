@@ -1,6 +1,7 @@
 #ifndef BUDDY
 
 #include <memory.h>
+#include <prints.h>
 
 #define TOTAL_MEM 128
 #define HEADER_SIZE sizeof(Header)
@@ -24,7 +25,7 @@ uint64_t memory_size;
 
 static void blockManager(Header * left, Header * right);
 
-void * initializeMem(void * base,uint64_t size){
+void initializeMem(void * base,uint64_t size){
     base_p = base;
     if(size > TOTAL_MEM){
         memory_size = TOTAL_MEM;
@@ -95,7 +96,24 @@ void memfree(void * ptr){
 }
 
 void memdata(){
+    uint64_t index = 0;
+    Header * curr = free_p;
 
+    char * string;
+    printf("Memory information:\n\n");
+    while(curr != NULL){
+        printf("Block number: ");
+        printInt(index);
+        printNewLine();
+        printf("Current address: ");
+        printHex(curr);
+        printNewLine();
+        printf("Free blocks: ");
+        printInt(curr->s.size);
+        printNewLine();
+        curr = curr->s.next;
+        index++;
+    }
 }
 
 static void blockManager(Header * left, Header * right){
@@ -109,24 +127,5 @@ static void blockManager(Header * left, Header * right){
         left->s.next = right;
     }
 }
-
-/*
-int getTotalMem(){
-    return TOTAL_MEM;
-}
-
-int getFreeMem(){
-    return TOTAL_MEM - sizeof(start);
-}
-
-int getOccuppiedMem(){
-    return sizeof(start);
-}
-void reserveMem(int size){
-    
-}
-*/
-
-
 
 #endif

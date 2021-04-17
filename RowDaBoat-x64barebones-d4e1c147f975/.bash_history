@@ -12,78 +12,6 @@ make clean
 make -s
 make clean
 make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clena
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-chess
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
 cd root/
 make clean
 make -s
@@ -498,3 +426,75 @@ make all
 make clean
 make all
 exit
+cd root/
+ls
+man memcheck
+ls
+cd Userland/
+ls
+cd SampleCodeModule/
+ls
+cd tests/
+ls
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+ls
+cd ..
+ls
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra tests/test_mm.c tests/test_util.c -o tests
+cd ..
+ls
+SampleCodeModule/
+ls
+cd SampleCodeModule/
+;s
+ls
+ls
+cd tests/
+ls
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+man stdint
+cd ..
+cd ..
+cd ..
+cd ..
+;s
+ls
+cd root/
+ls
+cd ..
+ls
+cd root/
+ls
+
+tree
+apt-get install tree
+tree
+ls
+gcc -Wall -Wextra test_mm.c test_util.c memory.c -o tests
+ls
+cd Userland/
+ls
+cd SampleCodeModule/
+ls
+cd tests/
+gcc -Wall -Wextra test_mm.c test_util.c memory.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c ./memory.c -o tests
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
+cd ..
+ls
+ld
+ls
+gcc -Wall -Wextra test_mm.c test_util.c -o tests
