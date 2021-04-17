@@ -14,10 +14,11 @@
 #define WRITEONSCREEN 8
 #define TICKSELAPSED 9
 #define CHARINTERRUPT 10
-
+#define MALLOC 11
+#define FREE 12
 
 #define TOTALREGS 16
-#define CANT_SYS 11
+#define CANT_SYS 13
 
 typedef struct
 {

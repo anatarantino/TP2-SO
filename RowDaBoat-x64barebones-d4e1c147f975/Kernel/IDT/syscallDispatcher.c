@@ -5,6 +5,7 @@
 #include <RTCtime.h>
 #include <time.h>
 #include <colors.h>
+#include <memory.h>
 
 //                          codigo        
 //                          uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9
@@ -40,6 +41,10 @@ uint64_t syscallDispatcher(t_registers * r){
                 return ticks_elapsed();
             case CHARINTERRUPT:
                 return waitCharInterruption();
+            case MALLOC:
+                return memalloc((uint32_t)r->rdi);
+            case FREE:
+                return memfree((void *)r->rdi);   
         
         }    
     }
