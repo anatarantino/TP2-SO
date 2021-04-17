@@ -79,3 +79,15 @@ uint32_t uintToBaseHexa(uint64_t value, char * buffer, uint32_t base, uint32_t l
 
 	return digits;
 }
+
+int log2(uint32_t n) {
+      if (n == 0) {
+            return -1;
+      }
+      int logValue = -1;
+      while (n) {
+            logValue++;
+            n >>= 1;
+      }
+      return logValue;
+}

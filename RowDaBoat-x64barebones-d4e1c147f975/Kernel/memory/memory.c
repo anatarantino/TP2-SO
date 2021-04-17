@@ -37,14 +37,14 @@ void initializeMem(void * base,uint64_t size){
     free_p->s.next = NULL;
 }
 
-void * memalloc(unsigned nbytes){
+void * memalloc(uint32_t nbytes){
     if(nbytes == 0){
         return NULL;
     }
-    unsigned size_needed = (nbytes + HEADER_SIZE - 1) / HEADER_SIZE + 1;
+    uint32_t size_needed = (nbytes + HEADER_SIZE - 1) / HEADER_SIZE + 1;
     Header * current;
     Header * previous = free_p;
-    unsigned csize;
+    uint32_t csize;
     for(current = previous ; current != NULL ; previous = current , current = current->s.next ){
         csize = current->s.size;
         if(current->s.size >= size_needed){
@@ -127,5 +127,22 @@ static void blockManager(Header * left, Header * right){
         left->s.next = right;
     }
 }
+
+/*
+int getTotalMem(){
+    return TOTAL_MEM;
+}
+
+int getFreeMem(){
+    return TOTAL_MEM - sizeof(start);
+}
+
+int getOccuppiedMem(){
+    return sizeof(start);
+}
+void reserveMem(int size){
+    
+}
+*/
 
 #endif
