@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-void * initializeMem(void * base,uint64_t size);
-void * memalloc(unsigned nbytes);
+void initializeMem(void * base,uint64_t size);
+void * memalloc(uint32_t nbytes);
 void memfree(void * ptr);
 int getTotalMem();
 int getFreeMem();

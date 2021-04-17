@@ -24,7 +24,7 @@ uint64_t memory_size;
 
 static void blockManager(Header * left, Header * right);
 
-void * initializeMem(void * base,uint64_t size){
+void initializeMem(void * base,uint64_t size){
     base_p = base;
     if(size > TOTAL_MEM){
         memory_size = TOTAL_MEM;
@@ -36,14 +36,14 @@ void * initializeMem(void * base,uint64_t size){
     free_p->s.next = NULL;
 }
 
-void * memalloc(unsigned nbytes){
+void * memalloc(uint32_t nbytes){
     if(nbytes == 0){
         return NULL;
     }
-    unsigned size_needed = (nbytes + HEADER_SIZE - 1) / HEADER_SIZE + 1;
+    uint32_t size_needed = (nbytes + HEADER_SIZE - 1) / HEADER_SIZE + 1;
     Header * current;
     Header * previous = free_p;
-    unsigned csize;
+    uint32_t csize;
     for(current = previous ; current != NULL ; previous = current , current = current->s.next ){
         csize = current->s.size;
         if(current->s.size >= size_needed){
@@ -126,7 +126,5 @@ void reserveMem(int size){
     
 }
 */
-
-
 
 #endif
