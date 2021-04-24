@@ -5,7 +5,6 @@
 
 #define TOTAL_MEM 128
 #define HEADER_SIZE sizeof(Header)
-#define NULL 0
 
 //esto lo sacamos del libro de C de Kernighan (para el informe)
 typedef long Align;

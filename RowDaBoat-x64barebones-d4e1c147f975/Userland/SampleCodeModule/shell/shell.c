@@ -9,14 +9,14 @@
 #include <lib.h>
 
 #define TOTAL_SIZE 150
-#define TOTAL_COMMANDS 8
+#define TOTAL_COMMANDS 13
 #define TOTAL_REG 17
 #define TOTAL_ARGUMENTS 5
 #define STLINE 43
 
 enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE};
 
-static char * commands[] = {"inforeg","printmem","time","chess","help","clear","divByZeroException","opCodeException"};
+static char * commands[] = {"inforeg","printmem","time","chess","help","clear","divByZeroException","opCodeException","ps","loop","kill","nice","block"};
 static char * user = "grupo33@user:~$ ";
 
 static char * registers[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ", "R9:  ",
@@ -44,6 +44,11 @@ static void divisionByZero(int args,char *arguments[]);
 static void opCodeException(int args,char *arguments[]);
 static void cleanBuffer();
 static void invalidAmount();
+static void ps();
+static void loop();
+static void kill();
+static void nice();
+static void block();
 
 void startShell(){
     char c=0;
@@ -348,3 +353,24 @@ static void invalidAmount(){
     newln();
     printColor("Invalid ammount of arguments", RED, BLACK);
 }
+
+static void ps(){
+
+}
+
+static void loop(){
+
+}
+
+static void kill(){
+
+}
+
+static void nice(){
+
+}
+
+static void block(){
+
+}
+
