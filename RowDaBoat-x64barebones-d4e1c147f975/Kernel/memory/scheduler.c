@@ -35,8 +35,8 @@ static process_node* dequeue();
 static void remove(process_node* process);
 static int isEmpty();
 static process_node* getProcess(uint64_t pid);
-static void unblock(process_node* process);
-static void block(process_node* process);
+static int unblock(process_node* process);
+static int block(process_node* process);
 
 static process_list* processes;
 static process_node* currentProcess;
@@ -54,7 +54,7 @@ void initializeSch(){
 
 }
 
-void *scheduler(uint64_t rsp){
+uint64_t scheduler(uint64_t rsp){
     if(currentProcess!=NULL){
        if(currentProcess->control_block.state==READY && ticksLeft>0){
            ticksLeft--;
@@ -99,16 +99,18 @@ void addProcess(){
 }
 
 
-static void unblock(process_node* process){
+static int unblock(process_node* process){
     if(process->control_block.state==KILLED || process == NULL){
         return ERROR;
     }
+    return READY;
 }
 
-static void block(process_node* process){
+static int block(process_node* process){
     if(process->control_block.state==KILLED || process == NULL){
         return ERROR;
     }
+    return BLOCKED;
 }
 
 
@@ -163,7 +165,7 @@ static process_node* dequeue(){
 }
 
 static void remove(process_node* process){
-    memfree(process->control_block.rbp - SIZE_OF_STACK + 1);
+    memfree((char *)process->control_block.rbp - SIZE_OF_STACK + 1);
     memfree(process);
 }
 

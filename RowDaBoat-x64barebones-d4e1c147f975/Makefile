@@ -1,11 +1,11 @@
-
+MEM_MAN = MEMORY
 all:  bootloader kernel userland image
 
 bootloader:
 	cd Bootloader; make all
 
 kernel:
-	cd Kernel; make all
+	cd Kernel; make all MEM_MAN=-D$(MEM_MAN)
 
 userland:
 	cd Userland; make all

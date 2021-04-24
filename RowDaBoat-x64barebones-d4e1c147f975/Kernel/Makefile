@@ -15,6 +15,8 @@ OBJECTS_LIBRARIES=$(SOURCES_LIBRARIES:.c=.o)
 OBJECTS_IDT=$(SOURCES_IDT:.c=.o)
 OBJECTS_MEMORY=$(SOURCES_MEMORY:.c=.o)
 
+MEM_MAN = -D MEMORY
+
 LOADERSRC=loader.asm
 
 LOADEROBJECT=$(LOADERSRC:.asm=.o)
@@ -26,7 +28,7 @@ $(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_DRI
 	$(LD) $(LDFLAGS) -T kernel.ld -o $@ $^
 
 %.o: %.c
-	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
+	$(GCC) $(GCCFLAGS) -I./include $(MEM_MAN) -c $< -o $@
 
 %.o : %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@

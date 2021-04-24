@@ -1,23 +1,3 @@
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-cd root/
-make clean
-make -s
-make clean
-make -s
-make clean
 make -s
 make clean
 make -s
@@ -498,3 +478,23 @@ ls
 ld
 ls
 gcc -Wall -Wextra test_mm.c test_util.c -o tests
+ls
+cd root/
+cd Toolchain/
+make all
+cd ..
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make MEM_MAN=MEMORY all
+cd Toolchain/
+make MEM_MAN=MEMORY all
+cd ..
+make all
+ls
+exit

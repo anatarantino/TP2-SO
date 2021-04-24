@@ -30,7 +30,7 @@ typedef struct {
 } t_stackFrame;
 
 void initializeSch();
-void *scheduler();
+uint64_t scheduler();
 void addProcess();
 
 #endif
