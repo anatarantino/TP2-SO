@@ -31,6 +31,6 @@ typedef struct {
 
 void initializeSch();
 uint64_t scheduler();
-void addProcess();
+uint64_t addProcess();
 
 #endif
