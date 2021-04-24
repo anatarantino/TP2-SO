@@ -42,9 +42,9 @@ uint64_t syscallDispatcher(t_registers * r){
             case CHARINTERRUPT:
                 return waitCharInterruption();
             case MALLOC:
-                return memalloc((uint32_t)r->rdi);
+                return (uint64_t) memalloc((uint32_t)r->rdi);
             case FREE:
-                return memfree((void *)r->rdi);   
+                memfree((void *)r->rdi);   
         
         }    
     }

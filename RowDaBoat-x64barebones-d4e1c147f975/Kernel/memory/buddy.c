@@ -27,7 +27,6 @@ static list_t * getBuddy(list_t *node);
 static uint8_t getBucket(uint32_t request);
 static int getFirstAvailableLevel(uint8_t minBucket);
 static uint8_t isPowerOf2(uint32_t num);
-static int log2(uint32_t n);
 
 static list_t *base_ptr;
 static uint32_t max_size;
@@ -35,7 +34,7 @@ static uint8_t bucket_count;
 static list_t buckets[MAX_LEVELS];
 
 
-void initializeMem(void * base,uint32_t size){
+void initializeMem(void * base,uint64_t size){
     if (base == NULL){
         return;
     }
@@ -51,7 +50,7 @@ void initializeMem(void * base,uint32_t size){
         bucket_count = MAX_LEVELS;
     }
 
-    for(size_t i = 0; i < bucket_count; i++){
+    for(uint64_t i = 0; i < bucket_count; i++){
         initList(&buckets[i]);
         buckets[i].is_free = 0;
         buckets[i].level = i;
@@ -129,21 +128,21 @@ void memData(){
                 printf("Node number: ");
                 printInt(index);
                 printf(". Pointer: 0x");
-                printhex((uintptr_t) aux);
+                printHex((uintptr_t) aux);
                 printf(". Next: 0x");
-                printhex((uintptr_t) aux->next);
+                printHex((uintptr_t) aux->next);
                 printf(". Prev: 0x");
-                printhex((uintptr_t) aux->prev);
+                printHex((uintptr_t) aux->prev);
                 printf(". Level: ");
                 printInt((uintptr_t) aux->level);
                 if(aux->is_free){
                     printf("The block is free.");
-                    println();
+                    printNewLine();
                 }else{
                     printf("The block isn't free.");
-                    println();
+                    printNewLine();
                 }
-                println();
+                printNewLine();
                 av_space+=index*BIN_POW(i + MIN_ALLOC_LOG_2);
             }
         }
@@ -151,7 +150,7 @@ void memData(){
     printf("Available space: ");
     printInt(av_space);
     printf(" B.");
-    println();
+    printNewLine();
 
 }
 
@@ -244,8 +243,11 @@ static uint8_t getBucket(uint32_t request){
 }
 
 static int getFirstAvailableLevel(uint8_t minBucket){
-    for(; minBucket < bucket_count && isListEmpty(&buckets[minBucket]); minBucket++)
-    return (minBucket < bucket_count)? minBucket : -1;
+    for(; minBucket < bucket_count && isListEmpty(&buckets[minBucket]); minBucket++);
+    if((minBucket < bucket_count)){
+        return minBucket;
+    }
+    return -1;
 }
 
 static uint8_t isPowerOf2(uint32_t num) {

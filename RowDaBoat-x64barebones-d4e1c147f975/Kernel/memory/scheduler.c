@@ -35,6 +35,8 @@ static process_node* dequeue();
 static void remove(process_node* process);
 static int isEmpty();
 static process_node* getProcess(uint64_t pid);
+static void unblock(process_node* process);
+static void block(process_node* process);
 
 static process_list* processes;
 static process_node* currentProcess;
@@ -54,19 +56,19 @@ void initializeSch(){
 
 void *scheduler(uint64_t rsp){
     if(currentProcess!=NULL){
-       if(currentProcess->pcb.state==READY && ticksLeft>0){
+       if(currentProcess->control_block.state==READY && ticksLeft>0){
            ticksLeft--;
            return rsp;
        }
 
-        currentProcess->pcb.rsp=rsp;
+        currentProcess->control_block.rsp=rsp;
 
-        if(lazyProcess->pcb.pid != currentProcess->pcb.pid){
-            if(currentProcess->pcb.state != KILLED){
+        if(lazyProcess->control_block.pid != currentProcess->control_block.pid){
+            if(currentProcess->control_block.state != KILLED){
                 enqueue(currentProcess);
             }else{
-                process_node* parent=getProcess(currentProcess->pcb.ppid);
-                if(parent!=NULL && parent->pcb.state==BLOCKED){
+                process_node* parent=getProcess(currentProcess->control_block.ppid);
+                if(parent!=NULL && parent->control_block.state==BLOCKED){
                     unblock(parent);
                 }
                 remove(currentProcess);
@@ -78,17 +80,17 @@ void *scheduler(uint64_t rsp){
         currentProcess=lazyProcess;
     }else{
         currentProcess=dequeue();
-        while(currentProcess->pcb.state != READY){
-            if(currentProcess->pcb.state == BLOCKED){
+        while(currentProcess->control_block.state != READY){
+            if(currentProcess->control_block.state == BLOCKED){
                 enqueue(currentProcess);
-            }else if(currentProcess->pcb.state == KILLED){
+            }else if(currentProcess->control_block.state == KILLED){
                 remove(currentProcess);
             }
             currentProcess=dequeue();
         }
     }
-    ticksLeft=currentProcess->pcb-prio;
-    return currentProcess->pcb.rsp;
+    ticksLeft=currentProcess->control_block.prio;
+    return currentProcess->control_block.rsp;
 }
 
 
@@ -97,28 +99,28 @@ void addProcess(){
 }
 
 
-void unblock(process_node* process){
-    if(process->pcb.state==KILLED || process == NULL){
+static void unblock(process_node* process){
+    if(process->control_block.state==KILLED || process == NULL){
         return ERROR;
     }
 }
 
-void block(process_node* process){
-    if(process->pcb.state==KILLED || process == NULL){
+static void block(process_node* process){
+    if(process->control_block.state==KILLED || process == NULL){
         return ERROR;
     }
 }
 
 
 static process_node* getProcess(uint64_t pid){
-    if(currentProcess != NULL && currentProcess->pcb.pid == pid){
+    if(currentProcess != NULL && currentProcess->control_block.pid == pid){
         return currentProcess;
     }
 
     process_node* node=processes->first;
 
     while(node != NULL){
-        if(node->pcb.pid == pid){
+        if(node->control_block.pid == pid){
             return node;
         }
         node=node->next;
@@ -137,7 +139,7 @@ static void enqueue(process_node* process){
         processes->first=process;
         processes->last=processes->first;
     }
-    if(process->pcb.state == READY){
+    if(process->control_block.state == READY){
         processes->pready++;
     }
 
@@ -153,7 +155,7 @@ static process_node* dequeue(){
     processes->first=processes->first->next;
     processes->size--;
 
-    if(first->pcb.state == READY){
+    if(first->control_block.state == READY){
         processes->pready--;
     }
 
@@ -161,7 +163,7 @@ static process_node* dequeue(){
 }
 
 static void remove(process_node* process){
-    memfree(process->pcb.rbp - SIZE_OF_STACK + 1);
+    memfree(process->control_block.rbp - SIZE_OF_STACK + 1);
     memfree(process);
 }
 

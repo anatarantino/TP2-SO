@@ -1,5 +1,7 @@
 #ifndef SCHEDULER_H
 
+#include <stdint.h>
+
 typedef struct {
       uint64_t gs;
       uint64_t fs;
@@ -30,7 +32,5 @@ typedef struct {
 void initializeSch();
 void *scheduler();
 void addProcess();
-void unblock(process_node* process);
-void block(process_node* process);
 
 #endif
