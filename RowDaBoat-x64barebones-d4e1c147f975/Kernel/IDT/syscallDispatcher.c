@@ -6,6 +6,7 @@
 #include <time.h>
 #include <colors.h>
 #include <memory.h>
+#include <scheduler.h>
 
 //                          codigo        
 //                          uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9
@@ -44,8 +45,17 @@ uint64_t syscallDispatcher(t_registers * r){
             case MALLOC:
                 return (uint64_t) memalloc((uint32_t)r->rdi);
             case FREE:
-                memfree((void *)r->rdi);   
-        
+                memfree((void *)r->rdi);
+            case KILL:
+                kill((uint64_t)r->rdi);
+            case PS:
+                ps();
+            case BLOCK:
+                block((uint64_t)r->rdi);
+            case NICE:
+                nice((uint64_t)r->rdi, (uint64_t)r->rsi);
+            case GETPID:
+                return getPid();
         }    
     }
     return 0;

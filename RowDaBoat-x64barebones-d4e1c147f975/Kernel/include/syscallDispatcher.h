@@ -16,9 +16,14 @@
 #define CHARINTERRUPT 10
 #define MALLOC 11
 #define FREE 12
+#define KILL 13
+#define PS 14
+#define BLOCK 15
+#define NICE 16
+#define GETPID 17
 
 #define TOTALREGS 16
-#define CANT_SYS 13
+#define CANT_SYS 18
 
 typedef struct
 {

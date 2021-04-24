@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-typedef struct {
+typedef struct stackFrame{
       uint64_t gs;
       uint64_t fs;
       uint64_t r15;
@@ -23,14 +23,20 @@ typedef struct {
 
       uint64_t rip;
       uint64_t cs;
-      uint64_t eflags;
+      uint64_t rflags;
       uint64_t rsp;
       uint64_t ss;
-      uint64_t base;
-} t_stackFrame;
+      uint64_t bp;
+} stackFrame;
 
 void initializeSch();
 uint64_t scheduler();
 uint64_t addProcess();
+void kill(uint64_t pid);
+void unblock(uint64_t pid);
+void block(uint64_t pid);
+void ps();
+void nice(uint64_t pid, uint64_t newPrio);
+uint64_t getPid();
 
 #endif

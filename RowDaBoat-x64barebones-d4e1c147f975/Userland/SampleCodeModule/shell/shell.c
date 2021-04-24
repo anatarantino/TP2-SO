@@ -7,6 +7,7 @@
 #include <chess.h>
 #include <colors.h>
 #include <lib.h>
+#include <scheduler.h>
 
 #define TOTAL_SIZE 150
 #define TOTAL_COMMANDS 13
@@ -290,7 +291,12 @@ static void help(int args, char *arguments[]){
     printf("clear -> clears the screen.\n");
     printf("chess -> this command starts a chess game.\n");
     printf("divByZeroException -> tests the division by zero exception.\n");
-    printf("opCodeException -> tests the exception caused by an invalid operation code.");
+    printf("opCodeException -> tests the exception caused by an invalid operation code.\n");
+    printf("ps -> .\n");
+    printf("loop -> .\n");
+    printf("kill -> .\n");
+    printf("nice -> .\n");
+    printf("block -> .");
 
 }
 
@@ -307,7 +313,7 @@ static void clear(int args, char *arguments[]){
 static void printMessage(){
     printColor("Welcome to the shell!\n",GREEN,BLACK);
     printColor("Please enter one of the following commands:\n",GREEN,BLACK);
-    printColor("- inforeg - printmem - time - chess - clear - divByZeroException - opCodeException\n",GREEN,BLACK);
+    printColor("- inforeg - printmem - time - chess - clear - divByZeroException - opCodeException - ps - loop - kill - nice - block\n",GREEN,BLACK);
     printColor("Or press 'help' to see more information on the commands of this shell.\n",GREEN,BLACK);
 }
 
@@ -321,6 +327,7 @@ static void divisionByZero(int args,char *arguments[]){
     int b=10/a;
     a=b;
 }
+
 static void opCodeException(int args,char *arguments[]){
     if(args!=1){
         invalidAmount();
@@ -329,6 +336,7 @@ static void opCodeException(int args,char *arguments[]){
     flag=0;
     __asm__("ud2");
 }
+
 static void chess(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
@@ -355,15 +363,15 @@ static void invalidAmount(){
 }
 
 static void ps(){
-
+    printProcess();
 }
 
-static void loop(){
+static void loop(){     // FALTA ESTE!!!!!
 
 }
 
 static void kill(){
-
+    
 }
 
 static void nice(){
