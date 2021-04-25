@@ -7,7 +7,7 @@
 #include <chess.h>
 #include <colors.h>
 #include <lib.h>
-#include <scheduler.h>
+#include <processLib.h>
 
 #define TOTAL_SIZE 150
 #define TOTAL_COMMANDS 13
@@ -15,7 +15,7 @@
 #define TOTAL_ARGUMENTS 5
 #define STLINE 43
 
-enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE};
+enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE,PSS,LOOPS,KILLS,NICES,BLOCKS};
 
 static char * commands[] = {"inforeg","printmem","time","chess","help","clear","divByZeroException","opCodeException","ps","loop","kill","nice","block"};
 static char * user = "grupo33@user:~$ ";
@@ -45,11 +45,11 @@ static void divisionByZero(int args,char *arguments[]);
 static void opCodeException(int args,char *arguments[]);
 static void cleanBuffer();
 static void invalidAmount();
-static void ps();
-static void loop();
-static void kill();
-static void nice();
-static void block();
+static void ps(int args, char *arguments[]);
+static void loop(int args, char *arguments[]);
+static void kill(int args, char *arguments[]);
+static void nice(int args, char *arguments[]);
+static void block(int args, char *arguments[]);
 
 void startShell(){
     char c=0;
@@ -137,6 +137,21 @@ static void applyCommand(int command_num,char *arguments[],int totArgs){
         break;
     case CHESS:
         chess(totArgs,arguments);
+        break;
+    case PSS:
+        ps(totArgs,arguments);
+        break;
+    case LOOPS:
+        loop(totArgs,arguments);
+        break;
+    case KILLS:
+        kill(totArgs,arguments);
+        break;  
+    case NICES:
+        nice(totArgs,arguments);
+        break;      
+    case BLOCKS:
+        block(totArgs,arguments);
         break;
     }
 
@@ -362,23 +377,56 @@ static void invalidAmount(){
     printColor("Invalid ammount of arguments", RED, BLACK);
 }
 
-static void ps(){
+static void ps(int args, char *arguments[]){
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
     printProcess();
 }
 
-static void loop(){     // FALTA ESTE!!!!!
-
+static void loop(int args, char *arguments[]){     // FALTA ESTE!!!!! Ver espacios
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    loopProcess();
 }
 
-static void kill(){
+static void kill(int args, char *arguments[]){
+    int pid;
+    strToInt(arguments[0], &pid);
+    if(args!=2){
+        invalidAmount();
+        return;
+    }
+    killProcess((uint64_t)pid);
+}
+
+static void nice(int args, char *arguments[]){
+    if(args!=3){
+        invalidAmount();
+        newln();
+        return;
+    }
+    int pid;
+    strToInt(arguments[0], &pid);
+    int newPrio;
+    strToInt(arguments[1],&newPrio);
     
+    niceProcess((uint64_t)pid, (uint64_t)newPrio);
 }
 
-static void nice(){
-
-}
-
-static void block(){
-
+static void block(int args, char *arguments[]){
+    if(args!=2){
+        invalidAmount();
+        newln();
+        return;
+    }
+    int pid;
+    strToInt(arguments[0], &pid);
+    blockProcess((uint64_t)pid);
 }
 

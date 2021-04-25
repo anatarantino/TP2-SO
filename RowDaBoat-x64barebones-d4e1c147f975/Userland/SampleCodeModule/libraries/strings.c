@@ -113,7 +113,6 @@ char* strToInt(char* string, int* num){
     *num = 0;
 	  int signo = 1;
     char character;
-
     if(*string == '-'){
       character = *(string + 1);
       if (character >= '0' && character <= '9') {
@@ -128,6 +127,7 @@ char* strToInt(char* string, int* num){
     while (character >= '0' && character <= '9'){
         *num = (*num)*10+(character-'0')*signo;
         string++;
+        character = *string;
     }
     return string;
 }

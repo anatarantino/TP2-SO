@@ -175,7 +175,7 @@ static process_node* getProcess(uint64_t pid){
 }
 
 void ps(){
-    printf("NAME     PID     PRIORITY    STACK POINTER   BASE POINTER    FOREGROUND\n");
+    printf("\nPID   PRIORITY    STACK POINTER   BASE POINTER    FOREGROUND     STATE     NAME\n");
 
     if(currentProcess != NULL){
         printProcess(currentProcess->control_block);
@@ -212,17 +212,19 @@ uint64_t getPid(){
 }
 
 static void printProcess(pcb block){
-    printf(block.name);
-    putChar('\t');
     printInt(block.pid);
-    putChar('\t');
+    printf("\t\t\t");
     printInt(block.prio);
-    putChar('\t');
+    printf("\t\t\t");
     printInt(block.rsp);
-    putChar('\t');
+    printf("\t\t");
     printInt(block.rbp);
-    putChar('\t');
+    printf("\t\t\t");
     printInt(block.foreground);
+    printf("\t\t\t\t");
+    printInt(block.state);
+    printf("\t\t\t");
+    printf(block.name);
     putChar('\n');
 }
 
@@ -281,4 +283,11 @@ static void remove(process_node* process){
 
 static int isEmpty(){
     return processes->size==0;
+}
+
+void killLoop(){
+    if (currentProcess != NULL && currentProcess->control_block.state == READY){
+        kill(currentProcess->control_block.pid);
+        return;
+    }
 }

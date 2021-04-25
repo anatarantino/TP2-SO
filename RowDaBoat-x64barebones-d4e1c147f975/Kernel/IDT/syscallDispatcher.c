@@ -46,14 +46,19 @@ uint64_t syscallDispatcher(t_registers * r){
                 return (uint64_t) memalloc((uint32_t)r->rdi);
             case FREE:
                 memfree((void *)r->rdi);
+                break;
             case KILL:
                 kill((uint64_t)r->rdi);
+                break;
             case PS:
                 ps();
+                break;
             case BLOCK:
                 block((uint64_t)r->rdi);
+                break;
             case NICE:
                 nice((uint64_t)r->rdi, (uint64_t)r->rsi);
+                break;
             case GETPID:
                 return getPid();
         }    

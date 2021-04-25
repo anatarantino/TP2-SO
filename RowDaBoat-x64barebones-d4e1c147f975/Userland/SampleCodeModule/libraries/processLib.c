@@ -1,8 +1,10 @@
-#include <scheduler.h>
+#include <processLib.h>
 #include <stdint.h>
 #include <syscall.h>
+#include <prints.h>
+#include <timeRTC.h>
 
-void printProcess(){    //ps
+void printProcess(){
     syscalls(PS,0,0,0,0,0,0);
 }
 
@@ -20,4 +22,17 @@ void killProcess(uint64_t pid){
 
 uint64_t getPidProcess(){
     return syscalls(GETPID,0,0,0,0,0,0);
+}
+
+void loopProcess(){
+    uint64_t pid = getPidProcess();
+    int ticks = 20;
+    printf("\n");
+    while(1){
+        int final=ticks_elapsed() + ticks;
+        while(ticks_elapsed() <= final);
+        printf("Looping this pid: ");
+        printInt(pid);
+        printf("\n");
+    }
 }

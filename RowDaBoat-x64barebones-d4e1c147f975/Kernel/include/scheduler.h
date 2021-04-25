@@ -38,5 +38,6 @@ void block(uint64_t pid);
 void ps();
 void nice(uint64_t pid, uint64_t newPrio);
 uint64_t getPid();
+void killLoop();
 
 #endif

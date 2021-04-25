@@ -5,6 +5,7 @@
 #include <prints.h>
 #include <video_driver.h>
 #include <time.h>
+#include <scheduler.h>
 
 #define SHIFT 1
 #define NOTSHIFT 0
@@ -73,6 +74,10 @@ void keyboard_handler(uint64_t rsp){ // 0 0 0 0 80
                     if(pressedKeys[key][0]!=0){
                         if(control == 1 && pressedKeys[key][0] == 'r'){
                             updateRegisters((uint64_t *)rsp);
+                            control=0;
+                        }
+                        else if(control == 1 && pressedKeys[key][0] == 'c'){
+                            killLoop();
                             control=0;
                         }else{
                             if(shift == 1){
