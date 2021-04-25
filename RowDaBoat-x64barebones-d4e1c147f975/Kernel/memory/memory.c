@@ -3,7 +3,7 @@
 #include <memory.h>
 #include <prints.h>
 
-#define TOTAL_MEM 128
+#define TOTAL_MEM 128*1024*1024
 #define HEADER_SIZE sizeof(Header)
 
 //esto lo sacamos del libro de C de Kernighan (para el informe)
@@ -46,7 +46,7 @@ void * memalloc(uint32_t nbytes){
     uint32_t csize;
     for(current = previous ; current != NULL ; previous = current , current = current->s.next ){
         csize = current->s.size;
-        if(current->s.size >= size_needed){
+        if(csize >= size_needed){
             if(csize > size_needed){
                 current->s.size -= size_needed;
                 current += current->s.size;

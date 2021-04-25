@@ -11,8 +11,9 @@
 #include <exceptions.h>
 #include <scheduler.h>
 #include <interrupts.h>
+#include <memory.h>
 
-#define HEAP_SIZE (1024*1024*50)
+#define HEAP_SIZE (1024*1024*128)
 
 extern uint8_t text;
 extern uint8_t rodata;
