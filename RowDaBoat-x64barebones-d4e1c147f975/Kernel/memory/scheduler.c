@@ -40,13 +40,12 @@ static void remove(process_node* process);
 static int isEmpty();
 static process_node* getProcess(uint64_t pid);
 static uint64_t initializeProcess(pcb * process);
-static void initializeStackFrame(uint64_t rbp);
+static void initializeStackFrame(uint64_t rbp,void (*process)(void));
 static uint64_t newPid();
 static void printProcess(pcb block);
 
 static process_list* processes;
 static process_node* currentProcess;
-static process_node* dummyProcess; 
 static uint64_t ticksLeft;
 static uint64_t last_pid = 1;
 
@@ -56,9 +55,6 @@ void initializeSch(){
     processes->last=NULL;
     processes->size=0;
     processes->pready=0;
-
-    addProcess();
-
 }
 
 uint64_t scheduler(uint64_t rsp){
@@ -67,40 +63,32 @@ uint64_t scheduler(uint64_t rsp){
            ticksLeft--;
            return rsp;
        }
-
         currentProcess->control_block.rsp=rsp;
-
-        if(dummyProcess->control_block.pid != currentProcess->control_block.pid){
-            if(currentProcess->control_block.state != KILLED){
-                enqueue(currentProcess);
-            }else{
-                process_node* parent=getProcess(currentProcess->control_block.ppid);
-                if(parent!=NULL && parent->control_block.state==BLOCKED){
-                    unblock(parent);
-                }
-                remove(currentProcess);
-            }            
-        }
-    }
-
-    if(processes->pready <= 0){
-        currentProcess=dummyProcess;
-    }else{
-        currentProcess=dequeue();
-        while(currentProcess->control_block.state != READY){
-            if(currentProcess->control_block.state == BLOCKED){
-                enqueue(currentProcess);
-            }else if(currentProcess->control_block.state == KILLED){
-                remove(currentProcess);
+    
+        if(currentProcess->control_block.state != KILLED){
+            enqueue(currentProcess);
+        }else{
+            process_node* parent=getProcess(currentProcess->control_block.ppid);
+            if(parent!=NULL && parent->control_block.state==BLOCKED){
+                unblock(parent->control_block.pid);
             }
-            currentProcess=dequeue();
+            remove(currentProcess);
+        }            
+    }
+    currentProcess=dequeue();
+    while(currentProcess->control_block.state != READY){
+        if(currentProcess->control_block.state == BLOCKED){
+            enqueue(currentProcess);
+        }else if(currentProcess->control_block.state == KILLED){
+            remove(currentProcess);
         }
+        currentProcess=dequeue();
     }
     ticksLeft=currentProcess->control_block.prio;
     return currentProcess->control_block.rsp;
 }
 
-uint64_t addProcess(){
+uint64_t addProcess(void (*process)(void)){
     process_node * newProcess = memalloc(sizeof(process_node));
     if(newProcess == NULL){
         return NULL;
@@ -108,11 +96,11 @@ uint64_t addProcess(){
     if(initializeProcess(&newProcess->control_block) == ERROR){
         return NULL;
     }
-    initializeStackFrame(newProcess->control_block.rbp);
+    initializeStackFrame(newProcess->control_block.rbp,process);
     enqueue(newProcess);
 
     if(newProcess->control_block.ppid != 0){
-        block(newProcess);
+        block(newProcess->control_block.pid);
     }
 
     return newProcess->control_block.pid;
@@ -136,27 +124,27 @@ static uint64_t initializeProcess(pcb * process){
     return 0;
 }
 
-static void initializeStackFrame(uint64_t rbp){
+static void initializeStackFrame(uint64_t rbp,void (*process)(void)){
     stackFrame * sframe = (stackFrame *)rbp-1;
 
-    sframe->gs = 0x0;   // change
-    sframe->fs = 0x0;   // change
-    sframe->r15 = 0x0;  // change
-    sframe->r14 = 0x0;  // change
-    sframe->r13 = 0x0;  // change
-    sframe->r12 = 0x0;  // change
-    sframe->r11 = 0x0;  // change
-    sframe->r10 = 0x0;  // change
-    sframe->r9 = 0x0;   // change
-    sframe->r8 = 0x0;   // change
-    sframe->rsi = 0x0;  // change
-    sframe->rdi = 0x0;  // change
-    sframe->rbp = 0x0;  // change
-    sframe->rdx = 0x0;  // change
-    sframe->rcx = 0x0;  // change
-    sframe->rbx = 0x0;  // change
-    sframe->rax = 0x0;  // change
-    sframe->rip = 0x0;  // change
+    sframe->gs = 0x01; 
+    sframe->fs = 0x02; 
+    sframe->r15 = 0x03;
+    sframe->r14 = 0x04;
+    sframe->r13 = 0x05;
+    sframe->r12 = 0x06;
+    sframe->r11 = 0x07;
+    sframe->r10 = 0x08;
+    sframe->r9 = 0x09; 
+    sframe->r8 = 0x0A; 
+    sframe->rsi = 0x0B;
+    sframe->rdi = 0x0C;
+    sframe->rbp = 0x0D;
+    sframe->rdx = 0x0E;
+    sframe->rcx = 0x0F;
+    sframe->rbx = 0x10;
+    sframe->rax = 0x11;
+    sframe->rip = (uint64_t)process;
     sframe->cs = 0x8;
     sframe->rflags = 0x202;
     sframe->rsp = (uint64_t)&sframe->bp;
@@ -225,17 +213,17 @@ uint64_t getPid(){
 
 static void printProcess(pcb block){
     printf(block.name);
-    putChar("/t");
+    putChar('\t');
     printInt(block.pid);
-    putChar("/t");
+    putChar('\t');
     printInt(block.prio);
-    putChar("/t");
+    putChar('\t');
     printInt(block.rsp);
-    putChar("/t");
+    putChar('\t');
     printInt(block.rbp);
-    putChar("/t");
+    putChar('\t');
     printInt(block.foreground);
-    putChar("/n");
+    putChar('\n');
 }
 
 void unblock(uint64_t pid){

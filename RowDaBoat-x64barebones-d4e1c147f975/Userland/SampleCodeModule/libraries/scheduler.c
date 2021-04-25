@@ -3,21 +3,21 @@
 #include <syscall.h>
 
 void printProcess(){    //ps
-    syscall(PS,0,0,0,0,0,0);
+    syscalls(PS,0,0,0,0,0,0);
 }
 
 void blockProcess(uint64_t pid){
-    syscall(BLOCK,pid,0,0,0,0,0);
+    syscalls(BLOCK,pid,0,0,0,0,0);
 }
 
 void niceProcess(uint64_t pid, uint64_t newPrio){
-    syscall(NICE,pid,newPrio,0,0,0,0);
+    syscalls(NICE,pid,newPrio,0,0,0,0);
 }
 
 void killProcess(uint64_t pid){
-    syscall(KILL,pid,0,0,0,0,0);
+    syscalls(KILL,pid,0,0,0,0,0);
 }
 
 uint64_t getPidProcess(){
-    syscall(GETPID,0,0,0,0,0,0);
+    return syscalls(GETPID,0,0,0,0,0,0);
 }

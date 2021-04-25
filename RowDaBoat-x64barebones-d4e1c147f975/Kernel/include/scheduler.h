@@ -31,7 +31,7 @@ typedef struct stackFrame{
 
 void initializeSch();
 uint64_t scheduler();
-uint64_t addProcess();
+uint64_t addProcess(void (*process)(void));
 void kill(uint64_t pid);
 void unblock(uint64_t pid);
 void block(uint64_t pid);

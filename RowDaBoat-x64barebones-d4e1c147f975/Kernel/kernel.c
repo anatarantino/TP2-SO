@@ -9,6 +9,10 @@
 #include <keyboard_driver.h>
 #include <colors.h>
 #include <exceptions.h>
+#include <scheduler.h>
+#include <interrupts.h>
+
+#define HEAP_SIZE (1024*1024*50)
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -21,6 +25,7 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
+static void * const sampleCodeModuleHeapAddress = (void*)0x600000;
 
 typedef int (*EntryPoint)();
 
@@ -52,6 +57,9 @@ int main(){
 	load_idt();
 	initializeVideo(WHITE,BLACK);
 	initExceptionHandler((uint64_t)sampleCodeModuleAddress,getRSP());
-	((EntryPoint)sampleCodeModuleAddress)();
+    initializeMem(sampleCodeModuleHeapAddress,HEAP_SIZE);
+    initializeSch();
+	addProcess(sampleCodeModuleAddress);
+	_hlt();
 	return 0;
 }
