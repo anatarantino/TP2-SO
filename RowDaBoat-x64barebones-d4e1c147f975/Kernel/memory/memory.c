@@ -98,7 +98,6 @@ void memdata(){
     uint64_t index = 0;
     Header * curr = free_p;
 
-    char * string;
     printf("Memory information:\n\n");
     while(curr != NULL){
         printf("Block number: ");

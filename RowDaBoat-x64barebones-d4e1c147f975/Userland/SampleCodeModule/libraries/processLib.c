@@ -31,8 +31,6 @@ void loopProcess(){
     while(1){
         int final=ticks_elapsed() + ticks;
         while(ticks_elapsed() <= final);
-        printf("Looping this pid: ");
         printInt(pid);
-        printf("\n");
     }
 }
