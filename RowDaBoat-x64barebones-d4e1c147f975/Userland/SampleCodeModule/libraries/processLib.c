@@ -4,6 +4,10 @@
 #include <prints.h>
 #include <timeRTC.h>
 
+uint64_t addProcess(void (*fn)(void)){
+    syscalls(ADD_PROCESS,fn,0,0,0,0,0);
+}
+
 void printProcess(){
     syscalls(PS,0,0,0,0,0,0);
 }

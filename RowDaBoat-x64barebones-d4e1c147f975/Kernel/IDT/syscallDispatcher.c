@@ -61,6 +61,9 @@ uint64_t syscallDispatcher(t_registers * r){
                 break;
             case GETPID:
                 return getPid();
+            case ADD_PROCESS:
+                return addProcess(r->rdi);
+                
         }    
     }
     return 0;

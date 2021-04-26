@@ -18,7 +18,7 @@
 enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE,PSS,LOOPS,KILLS,NICES,BLOCKS};
 
 static char * commands[] = {"inforeg","printmem","time","chess","help","clear","divByZeroException","opCodeException","ps","loop","kill","nice","block"};
-static char * user = "grupo33@user:~$ ";
+static char * user = "grupo6@user:~$ ";
 
 static char * registers[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ", "R9:  ",
                            "R8:  ", "RSI: ", "RDI: ", "RBP: ", "RDX: ", "RCX: ", "RBX: ","RAX: ",
@@ -50,6 +50,21 @@ static void loop(int args, char *arguments[]);
 static void kill(int args, char *arguments[]);
 static void nice(int args, char *arguments[]);
 static void block(int args, char *arguments[]);
+
+static t_command functions[] = {
+    {&inforeg,"inforeg"},
+    {&printmem,"printmem"},
+    {&time,"time"},
+    {&chess,"chess"},
+    {&clear,"clear"},
+    {&divisionByZero,"divByZeroException"},
+    {&opCodeException,"opCodeException"},
+    {&ps,"ps"},
+    {&loop,"loop"},
+    {&kill,"kill"},
+    {&nice,"nice"},
+    {&block,"block"}
+};
 
 void startShell(){
     char c=0;
@@ -96,6 +111,7 @@ static void findCommand(){
     for (int i = 0; i < TOTAL_COMMANDS; i++){
         result=stringcmp(arguments[0],commands[i]);
         if(result==TRUE){
+            addProcess(functions[i].command);
             applyCommand(i,arguments+1,totArgs);    
             flag=TRUE;
             comm = i;

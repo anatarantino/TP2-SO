@@ -3,6 +3,11 @@
 
 #include <stdint.h>
 
+typedef struct t_command {
+    void (*command)(int, char **);
+    char *name;
+}t_command;
+
 void startShell();
 
 #endif
