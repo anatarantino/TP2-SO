@@ -29,12 +29,14 @@ typedef struct stackFrame{
       uint64_t bp;
 } stackFrame;
 
+
+
 void initializeSch();
 uint64_t scheduler();
-uint64_t addProcess(void (*process)(void));
-void kill(uint64_t pid);
-void unblock(uint64_t pid);
-void block(uint64_t pid);
+uint64_t addProcess(void (*process)(int,char**),int argc, char** argv, uint8_t fg);
+uint64_t kill(uint64_t pid);
+uint64_t unblock(uint64_t pid);
+uint64_t block(uint64_t pid);
 void ps();
 void nice(uint64_t pid, uint64_t newPrio);
 uint64_t getPid();

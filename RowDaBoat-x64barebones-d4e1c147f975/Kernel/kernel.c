@@ -60,7 +60,8 @@ int main(){
 	initExceptionHandler((uint64_t)sampleCodeModuleAddress,getRSP());
     initializeMem(sampleCodeModuleHeapAddress,HEAP_SIZE);
     initializeSch();
-	addProcess(sampleCodeModuleAddress);
+	char* argv[] = {"Sample Code Module"};
+	addProcess(sampleCodeModuleAddress,1,argv,1);
 	_hlt();
 	return 0;
 }

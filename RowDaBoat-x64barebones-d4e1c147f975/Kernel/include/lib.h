@@ -10,4 +10,6 @@ char *cpu_vendor(char *result);
 
 uint64_t getRSP();
 
+void callTimerTick();
+
 #endif

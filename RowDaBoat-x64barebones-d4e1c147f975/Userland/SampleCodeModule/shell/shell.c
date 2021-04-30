@@ -67,6 +67,7 @@ static t_command functions[] = {
 };
 
 void startShell(){
+    printf("Entre a la shell soy muy muy feliz!!!\n");
     char c=0;
     cleanBuffer();
     if(flag){
@@ -104,14 +105,21 @@ static void analizeChar(char c){
 
 static void findCommand(){
     char * arguments[TOTAL_ARGUMENTS];
-    int totArgs = strtok(buff,' ', arguments, 10);
+    int totArgs = strtok(buff,' ', arguments, TOTAL_ARGUMENTS);
     int result;
     int flag=FALSE;
     int comm = -1;
+    uint8_t fg = 1;
+
+    if(arguments[totArgs - 1][0] == '&') {
+        fg = 0;
+        totArgs--;
+    }
+
     for (int i = 0; i < TOTAL_COMMANDS; i++){
         result=stringcmp(arguments[0],commands[i]);
         if(result==TRUE){
-            addProcess(functions[i].command);
+            addProcess(functions[i].command,totArgs,arguments,fg);
             applyCommand(i,arguments+1,totArgs);    
             flag=TRUE;
             comm = i;

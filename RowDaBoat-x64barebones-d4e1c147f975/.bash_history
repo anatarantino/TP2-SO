@@ -1,10 +1,3 @@
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
 make clean
 make -s
 make clean
@@ -498,3 +491,10 @@ cd ..
 make all
 ls
 exit
+cd root/
+make all
+make all
+make all
+make all
+make all
+make all

@@ -1,6 +1,15 @@
 #include <shell.h>
 #include <prints.h>
+#include <processLib.h>
+#include <syscall.h>
+
 int main() {
-	startShell();
+	char * argv[] = {"Shell"};
+	addProcess(&startShell,1,argv,1);
 	return 0;
 }
+
+// int main() {
+// 	startShell();
+// 	return 0;
+// }

@@ -1,6 +1,7 @@
 GLOBAL cpu_vendor
 GLOBAL getRTC
 GLOBAL getRSP
+GLOBAL callTimerTick
 global start
 
 section .text
@@ -85,4 +86,8 @@ getRTC:
 
 getRSP:
 	mov rax,rsp
+	ret
+
+callTimerTick:
+	int 20h
 	ret

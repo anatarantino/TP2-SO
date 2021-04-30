@@ -1,6 +1,7 @@
 #include <strings.h>
 #include <stdint.h>
 
+
 int strlen(char * str){
     int i = 0;
     while(str[i]!= 0){
@@ -90,4 +91,16 @@ int log2(uint32_t n) {
             n >>= 1;
       }
       return logValue;
+}
+
+char * strcopy(char * dest,char* src){
+	if(src == 0){
+		return 0;
+	}
+	int i;
+	for(i=0 ; i<strlen(src) ; i++){
+		dest[i] = src[i];
+	}
+	dest[i]=0;
+	return dest;
 }
