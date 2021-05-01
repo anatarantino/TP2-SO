@@ -24,14 +24,14 @@ int stringcmp(char * str1, char * str2){
     while (str1[index]!=0 && str2[index]!=0)
     {
       if(str1[index]!=str2[index]){
-        return FALSE;
+        return 0;
       }
       index++;
     }
     if(str1[index]==0 && str2[index]==0){
-        return TRUE;
+        return 1;
     }
-    return FALSE;
+    return 0;
 }
 
 int scanf(const char* format,...){     //scanf("%d %d %f",&num1, &num2, &num3);

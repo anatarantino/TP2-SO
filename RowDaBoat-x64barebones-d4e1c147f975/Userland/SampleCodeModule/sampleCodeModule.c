@@ -8,8 +8,3 @@ int main() {
 	addProcess(&startShell,1,argv,1);
 	return 0;
 }
-
-// int main() {
-// 	startShell();
-// 	return 0;
-// }

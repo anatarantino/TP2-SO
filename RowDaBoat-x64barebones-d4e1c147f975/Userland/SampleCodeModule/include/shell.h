@@ -8,6 +8,6 @@ typedef struct t_command {
     char *name;
 }t_command;
 
-void startShell();
+void startShell(int argc, char *argv[]);
 
 #endif

@@ -31,7 +31,7 @@ static int index=0,flag=1;
 //static functions
 static void printMessage();
 static void analizeChar(char c);
-static void findCommand();
+static void processCommand();
 static void applyCommand(int command_num,char*arguments[],int totArgs);
 static void removeChar();
 static void inforeg(int args, char *arguments[]);
@@ -56,6 +56,7 @@ static t_command functions[] = {
     {&printmem,"printmem"},
     {&time,"time"},
     {&chess,"chess"},
+    {&help,"help"},
     {&clear,"clear"},
     {&divisionByZero,"divByZeroException"},
     {&opCodeException,"opCodeException"},
@@ -66,8 +67,7 @@ static t_command functions[] = {
     {&block,"block"}
 };
 
-void startShell(){
-    printf("Entre a la shell soy muy muy feliz!!!\n");
+void startShell(int argc, char *argv[]){
     char c=0;
     cleanBuffer();
     if(flag){
@@ -88,9 +88,9 @@ static void analizeChar(char c){
     switch (c)
     {
     case '\n':
-        findCommand();
-        memset(buff,0,TOTAL_SIZE);
-        index=0;
+        processCommand();
+        cleanBuffer();
+        printf("\n");
         printf(user);
         break;
     case '\b':
@@ -103,35 +103,52 @@ static void analizeChar(char c){
     }
 }
 
-static void findCommand(){
-    char * arguments[TOTAL_ARGUMENTS];
-    int totArgs = strtok(buff,' ', arguments, TOTAL_ARGUMENTS);
-    int result;
-    int flag=FALSE;
+static int getCommand(char * name){
+    for(int i = 0 ; i< TOTAL_COMMANDS ; i++){
+        if(stringcmp(name,functions[i].name) == 1){
+            return i;
+        }
+    }
+    return -1;
+}
+
+static void processCommand(){
+
+    char * argv[TOTAL_ARGUMENTS] = {0};
+
+    int totArgs = strtok(buff,' ', argv, TOTAL_ARGUMENTS);
+
+    int flag=0;
     int comm = -1;
     uint8_t fg = 1;
 
-    if(arguments[totArgs - 1][0] == '&') {
+    if(argv[totArgs - 1][0] == '&') {
         fg = 0;
         totArgs--;
     }
 
-    for (int i = 0; i < TOTAL_COMMANDS; i++){
-        result=stringcmp(arguments[0],commands[i]);
-        if(result==TRUE){
-            addProcess(functions[i].command,totArgs,arguments,fg);
-            applyCommand(i,arguments+1,totArgs);    
-            flag=TRUE;
-            comm = i;
-        }
+    int command_index = getCommand(argv[0]);
+    if(command_index == -1){
+        printColor("Invalid command\n",RED,BLACK);
+        return;
     }
-    if(comm != CLEARSC && comm !=CHESS){
-        newln();
-        if(flag == FALSE){
-            printColor("Invalid command\n",RED,BLACK);
-        }
-
-    }
+    flag = 1;
+    addProcess(functions[command_index].command,totArgs,argv,fg);
+    
+    // if(comm != CLEARSC && comm !=CHESS){
+    //     printf("entre :O");
+    //     newln();
+    // }
+    
+    // for (int i = 0; i < TOTAL_COMMANDS; i++){
+    //     result=stringcmp(argv[0],commands[i]);
+    //     if(result==1){
+    //         addProcess(functions[i].command,totArgs,argv,fg);
+    //         applyCommand(i,argv+1,totArgs);    
+    //         flag=1;
+    //         comm = i;
+    //     }
+    // }
     
 }
 

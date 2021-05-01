@@ -105,12 +105,13 @@ uint64_t addProcess(void (*process)(int,char**),int argc, char** argv, uint8_t f
     if(initializeProcess(&newProcess->control_block,argv[0],fg) == ERROR){
         return 0;
     }
+
     initializeStackFrame(newProcess->control_block.rbp,process,argc,argv);
 
     enqueue(newProcess);
 
     if(newProcess->control_block.ppid && newProcess->control_block.foreground){
-        block(newProcess->control_block.pid);
+        block(newProcess->control_block.ppid);
     }
 
     return newProcess->control_block.pid;
@@ -250,9 +251,15 @@ static void printProcess(pcb block){
     printInt(block.rbp);
     printf("\t\t\t");
     printInt(block.foreground);
-    printf("\t\t\t\t");
-    printInt(block.state);
-    printf("\t\t\t");
+    printf("\t\t\t  ");
+    if(block.state == KILLED){
+        printf("KILLED ");
+    }else if(block.state == BLOCKED){
+        printf("BLOCKED");
+    }else{
+        printf("READY  ");
+    }
+    printf("\t");
     printf(block.name);
     putChar('\n');
 }

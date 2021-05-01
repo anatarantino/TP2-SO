@@ -55,13 +55,21 @@ void * initializeKernelBinary(){
 }
 
 int main(){
+	printf("Este mensaje deberia aparecer al principio :X\n");
 	load_idt();
+
 	initializeVideo(WHITE,BLACK);
+
 	initExceptionHandler((uint64_t)sampleCodeModuleAddress,getRSP());
+
     initializeMem(sampleCodeModuleHeapAddress,HEAP_SIZE);
+
     initializeSch();
+
 	char* argv[] = {"Sample Code Module"};
 	addProcess(sampleCodeModuleAddress,1,argv,1);
+	printf("antes del halt\n");
 	_hlt();
+	printf("esto no lo tendria que ver\n");
 	return 0;
 }
