@@ -50,6 +50,7 @@ static void loop(int args, char *arguments[]);
 static void kill(int args, char *arguments[]);
 static void nice(int args, char *arguments[]);
 static void block(int args, char *arguments[]);
+static void printu();
 
 static t_command functions[] = {
     {&inforeg,"inforeg"},
@@ -90,8 +91,6 @@ static void analizeChar(char c){
     case '\n':
         processCommand();
         cleanBuffer();
-        printf("\n");
-        printf(user);
         break;
     case '\b':
         removeChar();
@@ -129,11 +128,14 @@ static void processCommand(){
 
     int command_index = getCommand(argv[0]);
     if(command_index == -1){
-        printColor("Invalid command\n",RED,BLACK);
+        printColor("Invalid command",RED,BLACK);
+        printu();
         return;
     }
     flag = 1;
     addProcess(functions[command_index].command,totArgs,argv,fg);
+
+
     
     // if(comm != CLEARSC && comm !=CHESS){
     //     printf("entre :O");
@@ -218,10 +220,11 @@ static void inforeg(int args, char *arguments[]){
         printHex(regs[i]);
         newln();
     }
+    printu();
 }
 
 static void printmem(int args, char *arguments[]){
-   uint64_t num=hexastrToInt(arguments[0]);
+   uint64_t num=hexastrToInt(arguments[1]);
     char buffer[50];
     if(args!=2){
         invalidAmount();
@@ -242,7 +245,7 @@ static void printmem(int args, char *arguments[]){
         }
         newln(); 
     }
-
+    printf(user);
 }
 
 static void time(int args, char *arguments[]){
@@ -266,7 +269,7 @@ static void time(int args, char *arguments[]){
     printTime(MINUTES);
     putChar(':');
     printTime(SECONDS);
-
+    printu();
 }
 
 static void printTime(time_type desc){
@@ -353,7 +356,7 @@ static void help(int args, char *arguments[]){
     printf("kill -> .\n");
     printf("nice -> .\n");
     printf("block -> .");
-
+    printu();
 }
 
 static void clear(int args, char *arguments[]){
@@ -363,7 +366,7 @@ static void clear(int args, char *arguments[]){
         return;
     }
     clearScreen();
-
+    printf(user);
 }
 
 static void printMessage(){
@@ -396,13 +399,12 @@ static void opCodeException(int args,char *arguments[]){
 static void chess(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
     clearScreen();
     
     playChess();
-
+    printf(user);
 }
 
 static void cleanBuffer(){
@@ -416,6 +418,7 @@ static void cleanBuffer(){
 static void invalidAmount(){
     newln();
     printColor("Invalid ammount of arguments", RED, BLACK);
+    printu();
 }
 
 static void ps(int args, char *arguments[]){
@@ -425,6 +428,7 @@ static void ps(int args, char *arguments[]){
         return;
     }
     printProcess();
+    printf(user);
 }
 
 static void loop(int args, char *arguments[]){     // FALTA ESTE!!!!! Ver espacios
@@ -438,12 +442,13 @@ static void loop(int args, char *arguments[]){     // FALTA ESTE!!!!! Ver espaci
 
 static void kill(int args, char *arguments[]){
     int pid;
-    strToInt(arguments[0], &pid);
+    strToInt(arguments[1], &pid);
     if(args!=2){
         invalidAmount();
         return;
     }
     killProcess((uint64_t)pid);
+    printu();
 }
 
 static void nice(int args, char *arguments[]){
@@ -453,11 +458,12 @@ static void nice(int args, char *arguments[]){
         return;
     }
     int pid;
-    strToInt(arguments[0], &pid);
+    strToInt(arguments[1], &pid);
     int newPrio;
-    strToInt(arguments[1],&newPrio);
+    strToInt(arguments[2],&newPrio);
     
     niceProcess((uint64_t)pid, (uint64_t)newPrio);
+    printu();
 }
 
 static void block(int args, char *arguments[]){
@@ -467,7 +473,12 @@ static void block(int args, char *arguments[]){
         return;
     }
     int pid;
-    strToInt(arguments[0], &pid);
+    strToInt(arguments[1], &pid);
     blockProcess((uint64_t)pid);
+    printu();
 }
 
+static void printu(){
+    newln();
+    printf(user);
+}

@@ -106,7 +106,16 @@ uint64_t addProcess(void (*process)(int,char**),int argc, char** argv, uint8_t f
         return 0;
     }
 
-    initializeStackFrame(newProcess->control_block.rbp,process,argc,argv);
+    char ** copy = memalloc(sizeof(char*)*argc);
+    int size;
+
+    for(int i=0; i<argc; i++){
+        size = strlen(argv[i]);
+        copy[i] = memalloc(sizeof(char)*size);
+        strcopy(copy[i],argv[i]);
+    }
+
+    initializeStackFrame(newProcess->control_block.rbp,process,argc,copy);
 
     enqueue(newProcess);
 
