@@ -22,9 +22,10 @@
 #define NICE 16
 #define GETPID 17
 #define ADD_PROCESS 18
+#define UNBLOCK 19
 
 #define TOTALREGS 16
-#define CANT_SYS 19
+#define CANT_SYS 20
 
 typedef struct
 {

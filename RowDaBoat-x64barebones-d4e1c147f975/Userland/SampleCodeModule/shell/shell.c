@@ -10,14 +10,14 @@
 #include <processLib.h>
 
 #define TOTAL_SIZE 150
-#define TOTAL_COMMANDS 13
+#define TOTAL_COMMANDS 14
 #define TOTAL_REG 17
 #define TOTAL_ARGUMENTS 5
 #define STLINE 43
 
-enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE,PSS,LOOPS,KILLS,NICES,BLOCKS};
+enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE,PSS,LOOPS,KILLS,NICES,BLOCKS,UNBLOCKS};
 
-static char * commands[] = {"inforeg","printmem","time","chess","help","clear","divByZeroException","opCodeException","ps","loop","kill","nice","block"};
+static char * commands[] = {"inforeg","printmem","time","chess","help","clear","divByZeroException","opCodeException","ps","loop","kill","nice","block","unblock"};
 static char * user = "grupo6@user:~$ ";
 
 static char * registers[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ", "R9:  ",
@@ -50,6 +50,7 @@ static void loop(int args, char *arguments[]);
 static void kill(int args, char *arguments[]);
 static void nice(int args, char *arguments[]);
 static void block(int args, char *arguments[]);
+static void unblock(int args, char *arguments[]);
 static void printu();
 
 static t_command functions[] = {
@@ -65,7 +66,8 @@ static t_command functions[] = {
     {&loop,"loop"},
     {&kill,"kill"},
     {&nice,"nice"},
-    {&block,"block"}
+    {&block,"block"},
+    {&unblock,"unblock"}
 };
 
 void startShell(int argc, char *argv[]){
@@ -196,8 +198,10 @@ static void applyCommand(int command_num,char *arguments[],int totArgs){
     case BLOCKS:
         block(totArgs,arguments);
         break;
+    case UNBLOCKS:
+        unblock(totArgs,arguments);
+        break;
     }
-
 }
 
 static void removeChar(){
@@ -355,7 +359,8 @@ static void help(int args, char *arguments[]){
     printf("loop -> .\n");
     printf("kill -> .\n");
     printf("nice -> .\n");
-    printf("block -> .");
+    printf("block -> .\n");
+    printf("unblock -> .");
     printu();
 }
 
@@ -372,7 +377,7 @@ static void clear(int args, char *arguments[]){
 static void printMessage(){
     printColor("Welcome to the shell!\n",GREEN,BLACK);
     printColor("Please enter one of the following commands:\n",GREEN,BLACK);
-    printColor("- inforeg - printmem - time - chess - clear - divByZeroException - opCodeException - ps - loop - kill - nice - block\n",GREEN,BLACK);
+    printColor("- inforeg - printmem - time - chess - clear - divByZeroException - opCodeException - ps - loop - kill - nice - block - unblock\n",GREEN,BLACK);
     printColor("Or press 'help' to see more information on the commands of this shell.\n",GREEN,BLACK);
 }
 
@@ -475,6 +480,18 @@ static void block(int args, char *arguments[]){
     int pid;
     strToInt(arguments[1], &pid);
     blockProcess((uint64_t)pid);
+    printu();
+}
+
+static void unblock(int args, char *arguments[]){
+    if(args!=2){
+        invalidAmount();
+        newln();
+        return;
+    }
+    int pid;
+    strToInt(arguments[1], &pid);
+    unblockProcess((uint64_t)pid);
     printu();
 }
 

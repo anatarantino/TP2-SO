@@ -100,3 +100,19 @@ make all
 make all
 make all
 make all
+cd root
+make all
+ls
+cd RowDaBoat-x64barebones-d4e1c147f975/
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all

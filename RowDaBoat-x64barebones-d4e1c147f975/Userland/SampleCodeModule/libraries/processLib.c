@@ -16,6 +16,10 @@ void blockProcess(uint64_t pid){
     syscalls(BLOCK,pid,0,0,0,0,0);
 }
 
+void unblockProcess(uint64_t pid){
+    syscalls(UNBLOCK,pid,0,0,0,0,0);
+}
+
 void niceProcess(uint64_t pid, uint64_t newPrio){
     syscalls(NICE,pid,newPrio,0,0,0,0);
 }

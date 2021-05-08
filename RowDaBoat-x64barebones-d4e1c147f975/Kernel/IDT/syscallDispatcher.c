@@ -63,7 +63,8 @@ uint64_t syscallDispatcher(t_registers * r){
                 return getPid();
             case ADD_PROCESS:
                 return addProcess((void (*)(int, char **))r->rdi,(int)r->rsi,(char **)r->rdx,(uint8_t)r->r10);
-                
+            case UNBLOCK:
+                return unblock((uint64_t)r->rdi);     
         }    
     }
     return 0;
