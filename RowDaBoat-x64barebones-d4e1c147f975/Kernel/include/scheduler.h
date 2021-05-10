@@ -41,5 +41,6 @@ void ps();
 void nice(uint64_t pid, uint64_t newPrio);
 uint64_t getPid();
 void killLoop();
+void exit();            // resigns CPU in /IDT/exceptions.c
 
 #endif

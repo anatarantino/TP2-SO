@@ -12,4 +12,6 @@ uint64_t getRSP();
 
 void callTimerTick();
 
+uint64_t exchange(uint64_t * lock, uint64_t value);
+
 #endif

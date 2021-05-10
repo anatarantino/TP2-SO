@@ -356,7 +356,7 @@ static void help(int args, char *arguments[]){
     printf("divByZeroException -> tests the division by zero exception.\n");
     printf("opCodeException -> tests the exception caused by an invalid operation code.\n");
     printf("ps -> .\n");
-    printf("loop -> .\n");
+    printf("loop -> . To terminate the loop please press ctrl+c\n");
     printf("kill -> .\n");
     printf("nice -> .\n");
     printf("block -> .\n");

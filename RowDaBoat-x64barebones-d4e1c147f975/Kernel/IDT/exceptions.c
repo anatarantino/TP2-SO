@@ -2,6 +2,7 @@
 #include <colors.h>
 #include <exceptions.h>
 #include <interrupts.h>
+#include <scheduler.h>
 
 #define ZERO_EXCEPTION 0
 #define INVALID_OP	6
@@ -30,6 +31,7 @@ void exceptionDispatcher(int exception, uint64_t * registers) {
 	printNewLine();
 	registers[TOTALREGS-2]=returnRIP;
 	registers[TOTALREGS-2+3]=returnRSP;
+	exit();
 }
 
 static void zero_division() {

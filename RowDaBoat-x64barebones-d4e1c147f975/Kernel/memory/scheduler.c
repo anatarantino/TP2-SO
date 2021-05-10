@@ -10,13 +10,16 @@
 #define READY 1
 #define BLOCKED 2
 #define SIZE_OF_STACK (4 * 1024)
+#define BGPRIO 1
+#define FGPRIO 2
 #define MAXPRIO 30
+#define MAX_LEN 20
 
 typedef struct pcb{
 	uint64_t pid;                   /* ID of the proces */
 	uint64_t ppid;
     uint64_t prio;                  /* process priority */
-	char name[20];                  /* Name of the process */
+	char name[MAX_LEN];                  /* Name of the process */
     uint64_t state;
     uint64_t rsp;
     uint64_t rbp;
@@ -46,7 +49,6 @@ static uint64_t newPid();
 static void printProcess(pcb block);
 static int changeState(uint64_t pid, int state);
 static void wrapper(void (*entryPoint)(int, char**), int argc, char** argv);
-static void exit();
 
 static process_list* processes;
 static process_node* currentProcess;
@@ -153,6 +155,12 @@ static uint64_t initializeProcess(pcb * process, char* argv, uint8_t fg){
     process->rbp = (uint64_t)memalloc(SIZE_OF_STACK);
     if(process->rbp == NULL){
         return ERROR;
+    }
+    if(process->foreground){
+        process->prio = FGPRIO;
+    }
+    else{
+        process->prio = BGPRIO;
     }
     process->rbp = process->rbp + SIZE_OF_STACK - 1;
     process->rsp = (uint64_t)((stackFrame *)process->rbp - 1);
@@ -365,7 +373,7 @@ static void wrapper(void (*process)(int, char**), int argc, char** argv){
     exit();
 }
 
-static void exit(){
+void exit(){
     kill(currentProcess->control_block.pid);
     callTimerTick();
 }
