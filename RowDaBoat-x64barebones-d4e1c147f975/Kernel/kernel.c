@@ -12,6 +12,7 @@
 #include <scheduler.h>
 #include <interrupts.h>
 #include <memory.h>
+#include <sem.h>
 
 #define HEAP_SIZE (1024*1024*128)
 
@@ -65,6 +66,8 @@ int main(){
     initializeMem(sampleCodeModuleHeapAddress,HEAP_SIZE);
 
     initializeSch();
+
+	sem_init();
 
 	char* argv[] = {"Sample Code Module"};
 	addProcess(sampleCodeModuleAddress,1,argv,1);

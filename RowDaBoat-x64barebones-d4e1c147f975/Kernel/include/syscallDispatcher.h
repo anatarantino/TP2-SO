@@ -23,9 +23,16 @@
 #define GETPID 17
 #define ADD_PROCESS 18
 #define UNBLOCK 19
+#define YIELD 20
+#define SEM_OPEN 21
+#define SEM_WAIT 22
+#define SEM_POST 23
+#define SEM_CLOSE 24
+#define SEM_CHANGE_VALUE 25
+#define SEMS_PRINT 26
 
 #define TOTALREGS 16
-#define CANT_SYS 20
+#define CANT_SYS 27
 
 typedef struct
 {

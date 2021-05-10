@@ -11,5 +11,6 @@ void niceProcess(uint64_t pid, uint64_t newPrio);
 void killProcess(uint64_t pid);
 uint64_t getPidProcess();
 void loopProcess();
+void yield();
 
 #endif

@@ -106,8 +106,10 @@ char * strcopy(char * dest,char* src){
 }
 
 int strcmp(char * firstString,char* secondString){
-	int i;
-	for(i=0; firstString[i] != 0 && secondString[i] != 0 && firstString[i] == secondString[i], i++);
+	int i = 0;
+	while(firstString[i] != 0 && secondString[i] != 0 && (firstString[i] == secondString[i])){
+		i++;
+	}
 	if(firstString==secondString){
 		return 0;
 	}

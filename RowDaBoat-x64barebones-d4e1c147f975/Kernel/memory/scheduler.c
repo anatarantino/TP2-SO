@@ -377,3 +377,8 @@ void exit(){
     kill(currentProcess->control_block.pid);
     callTimerTick();
 }
+
+void yield(){
+    ticksLeft = 0;
+    callTimerTick();
+}

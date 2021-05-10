@@ -1,24 +1,26 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <semLib.h>
+#include <processLib.h> 
 
 uint64_t my_create_process(char * name){
   return 0;
 }
 
 uint64_t my_sem_open(char *sem_id, uint64_t initialValue){
-  return 0;
+  return sem_open(sem_id, initialValue);
 }
 
 uint64_t my_sem_wait(char *sem_id){
-  return 0;
+  return sem_wait(sem_id);
 }
 
 uint64_t my_sem_post(char *sem_id){
-  return 0;
+  return sem_post(sem_id);
 }
 
 uint64_t my_sem_close(char *sem_id){
-  return 0;
+  return sem_close(sem_id);
 }
 
 #define TOTAL_PAIR_PROCESSES 2

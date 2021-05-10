@@ -42,3 +42,7 @@ void loopProcess(){
         printInt(pid);
     }
 }
+
+void yield(){
+    syscalls(YIELD,0,0,0,0,0,0);
+}

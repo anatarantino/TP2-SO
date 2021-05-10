@@ -1,91 +1,82 @@
 #include <sem.h>
-#include <stdint.h>
 #include <memory.h>
 #include <lib.h>
 #include <strings.h>
 #include <scheduler.h>
+#include <prints.h>
 
 #define SEM_MAX 15
-#define MAX_LEN 20
 #define ERROR -1
 #define LOCK 1
 #define UNLOCK 0
 
-typedef struct sem_t{
-    char name[MAX_LEN];
-    uint64_t value;
-    struct sem_t * next;
-    uint64_t lock;
-    uint64_t count;
-    process_node * firstInLine;
-    process_node * lastInLine;
-} sem_t;
+static void sem_create(sem_t * process, char*name, uint64_t value);
+static void sem_print(sem_t * sem);
+static void pPrint(process_node * process);
+static void exchanging(uint64_t * semval, uint64_t val);
+static void process_enqueue(sem_t * sem, uint64_t pid);
+static uint64_t process_dequeue(sem_t * sem);
 
-typedef struct process_node{
-    struct process_node * next;
-    uint64_t pid;
-} process_node;
-
-typedef struct process_list{
-    process_node* first;
-}process_list;
-
-static void process_init(sem_t * process, char*name, uint64_t value);
-static void exchanging(uint64_t * sem, uint64_t val);
-static void sem_enqueue(sem_t * sem, uint64_t pid);
-static uint64_t sem_dequeue(sem_t * sem);
-
-static process_list* processes;
+static sem_list* semList;
 static uint64_t newSem;
-static uint64_t finalSem;
+static uint64_t endSem;
 
-void sem_init(){
-    processes = memalloc(sizeof(process_list));
-    processes->first = NULL;
+int sem_init(){
+    semList = memalloc(sizeof(sem_list));
+    if(semList == NULL){
+        return ERROR;
+    }
+    semList->first = NULL;
+    newSem = 0;
+    endSem = 0;
+    return 0;
 }
 
-static void process_init(sem_t * process, char*name, uint64_t value){
-    strcpy(process->name, name);
-    process->value = value;
-    sem_t * nextProcess = processes->first;
-    processes->first = process;
-    process->next = nextProcess;
-    process->lock = UNLOCK;
-    process->count = 1;
-    process->firstInLine = NULL;
-    process->lastInLine = NULL;
+static void sem_create(sem_t * sem, char*name, uint64_t value){
+    strcopy(sem->name, name);
+    sem->value = value;
+    sem_t * nextSem = semList->first;
+    semList->first = sem;
+    sem->next = nextSem;
+    sem->lock = UNLOCK;
+    sem->pcount = 1;
+    sem->firstInLine = NULL;
+    sem->lastInLine = NULL;
 }
 
 sem_t * sem_open(char * name, uint64_t value){
     if(name == NULL){
-        return ERROR;
+        return NULL;
     }
     exchanging(&newSem, LOCK);
-    sem_t * process = processes->first;
-    while(process){
-        if(strcmp(process->name, name) == 0){
-            process->count++;
+    sem_t * sem = semList->first;
+    while(sem){
+        if(strcmp(sem->name, name) == 0){
+            sem->pcount++;
             exchange(&newSem, UNLOCK);
-            return process;
+            return sem;
         }
-        process = process->next;
+        sem = sem->next;
     }
-    process = memalloc(sizeof(sem_t));
-    if(process == NULL){
+    sem = memalloc(sizeof(sem_t));
+    if(sem == NULL){
         exchange(&newSem, UNLOCK);
         return NULL;
     }
-    process_init(process,name,value);
+    sem_create(sem,name,value);
     exchange(&newSem, UNLOCK);
-    return process;
+    return sem;
 }
 
 int sem_wait(sem_t * sem){
+    if(sem == NULL){
+        return ERROR;
+    }
     exchanging(&sem->lock, LOCK);
     sem->value--;
     if(sem->value < 0){
         uint64_t pid = getPid();
-        sem_enqueue(sem,pid);
+        process_enqueue(sem,pid);
         exchange(&sem->lock, UNLOCK);
         block(pid);
     } else{
@@ -96,11 +87,14 @@ int sem_wait(sem_t * sem){
 }
 
 int sem_post(sem_t * sem){
+    if(sem == NULL){
+        return ERROR;
+    }
     exchanging(&sem->lock, LOCK);
     sem->value++;
-    int pid;
+    uint64_t pid;
     if(sem->firstInLine != NULL){
-        pid = sem_dequeue(sem);
+        pid = process_dequeue(sem);
         unblock(pid);
     }
     exchange(&sem->lock, UNLOCK);
@@ -108,38 +102,80 @@ int sem_post(sem_t * sem){
 }
 
 int sem_close(sem_t * sem){
-    exchanging(&finalSem, LOCK);
-    sem_t * currentProcess = processes->first;
-    sem_t * previousProcess = processes->first;
-    while(currentProcess){
-        if(sem == currentProcess){
-            sem->count--;
-            if(sem->count == 0){
-                if(currentProcess == previousProcess){
-                    process->first = currentProcess->next;
+    if(sem == NULL){
+        return ERROR;
+    }
+    exchanging(&endSem, LOCK);
+    sem_t * currentSem = semList->first;
+    sem_t * previousSem = semList->first;
+    while(currentSem){
+        if(sem == currentSem){
+            sem->pcount--;
+            if(sem->pcount == 0){
+                if(currentSem == previousSem){
+                    semList->first = currentSem->next;
                 } else {
-                    previousProcess->next = currentProcess->next;
+                    previousSem->next = currentSem->next;
                 }
-                memfree(currentProcess);
+                memfree(currentSem);
             }
-            exchange(&finalSem, UNLOCK);
+            exchange(&endSem, UNLOCK);
             return 0;
         }
-        previousProcess = currentProcess;
-        currentProcess = currentProcess->next;
+        previousSem = currentSem;
+        currentSem = currentSem->next;
     }
-    exchange(&finalSem, UNLOCK);
-    return ERROR
+    exchange(&endSem, UNLOCK);
+    return ERROR;
 }
 
-static void exchanging(uint64_t * sem, uint64_t val){
-    uint64_t ex = exchange(sem,val);
+void sem_changeValue(sem_t * sem, uint64_t value){
+    if(sem == NULL){
+        return;
+    }
+    exchanging(&sem->lock, LOCK);
+    sem->value = value;
+    exchange(&sem->lock, UNLOCK);
+}
+
+void sems_print(){
+    sem_t * sem = semList->first;
+    printf("\nNAME   VALUE    BLOCKED PROCESSES PID'S\n");
+    while(sem){
+        sem_print(sem);
+        sem = sem->next;
+    }
+}
+
+static void sem_print(sem_t * sem){
+    exchanging(&sem->lock, LOCK);
+    printf(sem->name);
+    printf("\t\t\t");
+    printInt(sem->value);
+    printf("\t\t\t");
+    pPrint(sem->firstInLine);
+    exchange(&sem->lock,UNLOCK);
+}
+
+static void pPrint(process_node * process){
+    while(process){
+        printInt(process->pid);
+        printf("\t");
+        process = process->next;
+    }
+}
+
+static void exchanging(uint64_t * semval, uint64_t val){
+    uint64_t ex = exchange(semval,val);
     while(ex != 0){
-        ex = exchange(sem,val);
+        ex = exchange(semval,val);
     }
 }
 
-static void sem_enqueue(sem_t * sem, uint64_t pid){
+static void process_enqueue(sem_t * sem, uint64_t pid){
+    if(sem == NULL){
+        return;
+    }
     process_node * process = memalloc(sizeof(process_node));
     process->pid = pid;
     process->next = NULL;
@@ -148,12 +184,13 @@ static void sem_enqueue(sem_t * sem, uint64_t pid){
         sem->firstInLine = process;
         sem->lastInLine = process;
     } else {
-        sem->lastInLine->next = process;
+        process_node * last = sem->lastInLine;
+        last->next = process;
         sem->lastInLine = process;
     }
 }
 
-static uint64_t sem_dequeue(sem_t * sem){
+static uint64_t process_dequeue(sem_t * sem){
     if(sem == NULL || sem->firstInLine == NULL){
         return ERROR;
     }
