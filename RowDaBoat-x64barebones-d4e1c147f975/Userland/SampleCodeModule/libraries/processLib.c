@@ -46,3 +46,7 @@ void loopProcess(){
 void yield(){
     syscalls(YIELD,0,0,0,0,0,0);
 }
+
+void wait(uint64_t pid){
+    syscalls(WAIT,pid,0,0,0,0,0);
+}
