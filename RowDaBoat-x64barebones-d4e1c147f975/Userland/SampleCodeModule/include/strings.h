@@ -17,5 +17,7 @@ uint64_t hexastrToInt(char *str);
 char* strToInt(char* string, int* num);
 int strtok(char * str, const char delim, char * array[], int arraySize);
 void read(char *buff);
-
+char* strcat(char* destination, char* source);
+char * strcopy(char * dest,char* src);
+int atoi(char * s);
 #endif
