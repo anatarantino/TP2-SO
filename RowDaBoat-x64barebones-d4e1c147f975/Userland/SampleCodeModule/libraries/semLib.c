@@ -21,6 +21,6 @@ void sem_changeValue(uint64_t * sem, uint64_t value){
     syscalls(SEM_CHANGE_VALUE,sem,value,0,0,0,0);
 }
 
-void sems_print(){
+void sem_print(){
     syscalls(SEMS_PRINT,0,0,0,0,0,0);
 }

@@ -97,6 +97,9 @@ uint64_t syscallDispatcher(t_registers * r){
             case PIPE_LIST:
                 plist();
                 break;
+            case MEMDATA:
+                memdata();
+                break;
         }    
     }
     return 0;

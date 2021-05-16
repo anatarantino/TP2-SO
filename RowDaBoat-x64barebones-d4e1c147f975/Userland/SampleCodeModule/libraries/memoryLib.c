@@ -7,3 +7,7 @@ void * memalloc(uint32_t size){
 void memfree(void * address){
     syscalls(FREE,(uint64_t)address,0,0,0,0,0);
 }
+
+void memdata(){
+    syscalls(MEMDATA,0,0,0,0,0,0);
+}

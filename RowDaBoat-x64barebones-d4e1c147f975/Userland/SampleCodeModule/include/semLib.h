@@ -8,6 +8,6 @@ int sem_wait(uint64_t * sem);
 int sem_post(uint64_t * sem);
 int sem_close(uint64_t * sem);
 void sem_changeValue(uint64_t * sem, uint64_t value);
-void sems_print();
+void sem_print();
 
 #endif

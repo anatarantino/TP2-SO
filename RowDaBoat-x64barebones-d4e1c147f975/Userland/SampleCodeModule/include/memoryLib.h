@@ -5,5 +5,6 @@
 
 void * memalloc(uint32_t size);
 void memfree(void * address);
+void memdata();
 
 #endif

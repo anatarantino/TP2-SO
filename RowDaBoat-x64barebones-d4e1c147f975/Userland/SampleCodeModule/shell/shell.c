@@ -8,16 +8,19 @@
 #include <colors.h>
 #include <lib.h>
 #include <processLib.h>
+#include <ipcLib.h>
+#include <memoryLib.h>
+#include <semLib.h>
 
 #define TOTAL_SIZE 150
-#define TOTAL_COMMANDS 14
+#define TOTAL_COMMANDS 21
 #define TOTAL_REG 17
 #define TOTAL_ARGUMENTS 5
 #define STLINE 43
 
-enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE,PSS,LOOPS,KILLS,NICES,BLOCKS,UNBLOCKS};
+enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE,PSS,LOOPS,KILLS,NICES,BLOCKS,UNBLOCKS, MEMS, SEMS, CATS, WCS, FILTERS, PIPES, PHYLOS};
 
-static char * commands[] = {"inforeg","printmem","time","chess","help","clear","divByZeroException","opCodeException","ps","loop","kill","nice","block","unblock"};
+static char * commands[] = {"inforeg","printmem","time","chess","help","clear","divByZeroException","opCodeException","ps","loop","kill","nice","block","unblock", "mem", "sem", "cat", "wc", "filer", "pipe", "phylo"};
 static char * user = "grupo6@user:~$ ";
 
 static char * registers[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ", "R9:  ",
@@ -52,6 +55,13 @@ static void nice(int args, char *arguments[]);
 static void block(int args, char *arguments[]);
 static void unblock(int args, char *arguments[]);
 static void printu();
+static void mem(int args, char *arguments[]);
+static void sem(int args, char *arguments[]);
+static void cat(int args, char *arguments[]);
+static void wc(int args, char *arguments[]);
+static void filter(int args, char *arguments[]);
+static void pipe(int args, char *arguments[]);
+static void phylo(int args, char *arguments[]);
 
 static t_command functions[] = {
     {&inforeg,"inforeg"},
@@ -67,7 +77,14 @@ static t_command functions[] = {
     {&kill,"kill"},
     {&nice,"nice"},
     {&block,"block"},
-    {&unblock,"unblock"}
+    {&unblock,"unblock"},
+    {&mem, "mem"},
+    {&sem, "sem"},
+    {&cat, "cat"},
+    {&wc, "wc"},
+    {&filter, "filter"},
+    {&pipe, "pipe"},
+    {&phylo, "phylo"}
 };
 
 void startShell(int argc, char *argv[]){
@@ -339,7 +356,6 @@ static void printTime(time_type desc){
     }
 }
 
-
 static void help(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
@@ -360,7 +376,14 @@ static void help(int args, char *arguments[]){
     printf("kill -> .\n");
     printf("nice -> .\n");
     printf("block -> .\n");
-    printf("unblock -> .");
+    printf("unblock -> .\n");
+    printf("mem -> .\n");
+    printf("sem -> .\n");
+    printf("cat -> .\n");
+    printf("wc -> .\n");
+    printf("filter -> .\n");
+    printf("pipe -> .\n");
+    printf("phylo -> .");
     printu();
 }
 
@@ -377,7 +400,7 @@ static void clear(int args, char *arguments[]){
 static void printMessage(){
     printColor("Welcome to the shell!\n",GREEN,BLACK);
     printColor("Please enter one of the following commands:\n",GREEN,BLACK);
-    printColor("- inforeg - printmem - time - chess - clear - divByZeroException - opCodeException - ps - loop - kill - nice - block - unblock\n",GREEN,BLACK);
+    printColor("- inforeg - printmem - time - chess - clear - divByZeroException - opCodeException - ps - loop - kill - nice - block - unblock - mem - sem - cat - wc - filter - pipe - phylo\n",GREEN,BLACK);
     printColor("Or press 'help' to see more information on the commands of this shell.\n",GREEN,BLACK);
 }
 
@@ -436,7 +459,7 @@ static void ps(int args, char *arguments[]){
     printf(user);
 }
 
-static void loop(int args, char *arguments[]){     // FALTA ESTE!!!!! Ver espacios
+static void loop(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
         newln();
@@ -498,4 +521,74 @@ static void unblock(int args, char *arguments[]){
 static void printu(){
     newln();
     printf(user);
+}
+
+static void mem(int args, char *arguments[]){
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    memdata();
+    printu();
+}
+
+static void sem(int args, char *arguments[]){
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    sem_print();
+    printu();
+}
+
+static void cat(int args, char *arguments[]){
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    catFunc();
+    printu();
+}
+
+static void wc(int args, char *arguments[]){
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    wcFunc();
+    printu();
+}
+
+static void filter(int args, char *arguments[]){
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    filterFunc();
+    printu();
+}
+
+static void pipe(int args, char *arguments[]){
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    plist();
+    printu();
+}
+
+static void phylo(int args, char *arguments[]){
+    if(args!=2){            // recibe un numero?
+        invalidAmount();
+        newln();
+        return;
+    }  
+    // Aca va la funcion que llama a phylo
+    printu();
 }
