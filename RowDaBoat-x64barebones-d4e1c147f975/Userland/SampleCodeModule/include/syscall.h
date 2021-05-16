@@ -30,6 +30,12 @@
 #define SEM_CLOSE 24
 #define SEM_CHANGE_VALUE 25
 #define SEMS_PRINT 26
+#define PIPE_INIT 27
+#define PIPE_OPEN 28
+#define PIPE_CLOSE 29
+#define PIPE_READ 30
+#define PIPE_WRITE 31
+#define PIPE_LIST 32
 
 uint64_t syscalls(uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9);
 

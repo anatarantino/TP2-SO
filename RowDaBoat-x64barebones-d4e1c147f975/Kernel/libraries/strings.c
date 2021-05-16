@@ -118,3 +118,18 @@ int strcmp(char * firstString,char* secondString){
 	}
 	return -1;
 }
+
+char * strcopycat(char * dest,char* src, char* cat){
+	if(src == 0 || cat == 0){
+		return 0;
+	}
+	int i,j;
+	for(i=0 ; i<strlen(src) ; i++){
+		dest[i] = src[i];
+	}
+	for(j=0; j<strlen(cat); j++){
+		dest[i+j] = cat[j];
+	}
+	dest[i+j]=0;
+	return dest;
+}

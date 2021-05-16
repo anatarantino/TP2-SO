@@ -8,6 +8,7 @@
 #include <memory.h>
 #include <scheduler.h>
 #include <sem.h>
+#include <ipc.h>
 
 //                          codigo        
 //                          uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9
@@ -70,18 +71,31 @@ uint64_t syscallDispatcher(t_registers * r){
                 yield();
                 break;
             case SEM_OPEN:
-                return sem_open((char *)r->rdi, (uint64_t)r->rsi);
+                return (uint64_t)sem_open((char *)r->rdi, (uint64_t)r->rsi);
             case SEM_WAIT:
-                return sem_wait((uint64_t)r->rdi);
+                return sem_wait((void *)r->rdi);
             case SEM_POST:
-                return sem_post((uint64_t)r->rdi);
+                return sem_post((void *)r->rdi);
             case SEM_CLOSE:
-                return sem_close((uint64_t)r->rdi);
+                return sem_close((void *)r->rdi);
             case SEM_CHANGE_VALUE:
-                sem_changeValue((uint64_t)r->rdi, (uint64_t)r->rsi);
+                sem_changeValue((void *)r->rdi, (uint64_t)r->rsi);
                 break;
             case SEMS_PRINT:
                 sems_print();
+                break;
+            case PIPE_INIT:
+                return pinit();
+            case PIPE_OPEN:
+                return popen((char *) r->rdi);
+            case PIPE_CLOSE:
+                return pclose((uint64_t)r->rdi);
+            case PIPE_READ:
+                return pread((uint64_t)r->rdi);
+            case PIPE_WRITE:
+                return pwrite((uint64_t)r->rdi, (char)r->rsi);
+            case PIPE_LIST:
+                plist();
                 break;
         }    
     }

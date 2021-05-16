@@ -39,4 +39,6 @@ void sem_changeValue(sem_t * sem, uint64_t value);
 
 void sems_print();
 
+void sem_print(sem_t * sem);
+
 #endif

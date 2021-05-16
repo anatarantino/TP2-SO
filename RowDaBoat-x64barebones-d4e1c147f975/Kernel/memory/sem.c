@@ -11,7 +11,6 @@
 #define UNLOCK 0
 
 static void sem_create(sem_t * process, char*name, uint64_t value);
-static void sem_print(sem_t * sem);
 static void pPrint(process_node * process);
 static void exchanging(uint64_t * semval, uint64_t val);
 static void process_enqueue(sem_t * sem, uint64_t pid);
@@ -126,7 +125,7 @@ int sem_close(sem_t * sem){
         currentSem = currentSem->next;
     }
     exchange(&endSem, UNLOCK);
-    return ERROR;
+    return 1;
 }
 
 void sem_changeValue(sem_t * sem, uint64_t value){
@@ -147,13 +146,14 @@ void sems_print(){
     }
 }
 
-static void sem_print(sem_t * sem){
+void sem_print(sem_t * sem){
     exchanging(&sem->lock, LOCK);
     printf(sem->name);
     printf("\t\t\t");
     printInt(sem->value);
     printf("\t\t\t");
     pPrint(sem->firstInLine);
+    printNewLine();
     exchange(&sem->lock,UNLOCK);
 }
 
