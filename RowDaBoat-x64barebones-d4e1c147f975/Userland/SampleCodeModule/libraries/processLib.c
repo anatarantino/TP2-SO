@@ -12,11 +12,11 @@ void printProcess(){
     syscalls(PS,0,0,0,0,0,0);
 }
 
-void blockProcess(uint64_t pid){
+uint64_t blockProcess(uint64_t pid){
     syscalls(BLOCK,pid,0,0,0,0,0);
 }
 
-void unblockProcess(uint64_t pid){
+uint64_t unblockProcess(uint64_t pid){
     syscalls(UNBLOCK,pid,0,0,0,0,0);
 }
 
