@@ -217,6 +217,27 @@ static void applyCommand(int command_num,char *arguments[],int totArgs){
     case UNBLOCKS:
         unblock(totArgs,arguments);
         break;
+    case MEMS:
+        mem(totArgs,arguments);
+        break;
+    case SEMS:
+        sem(totArgs,arguments);
+        break;
+    case CATS:
+        cat(totArgs,arguments);
+        break;
+    case WCS:
+        wc(totArgs,arguments);
+        break;
+    case FILTERS:
+        filter(totArgs,arguments);
+        break;
+    case PIPES:
+        pipe(totArgs,arguments);
+        break;
+    case PHYLOS:
+        phylo(totArgs,arguments);
+        break;
     }
 }
 
