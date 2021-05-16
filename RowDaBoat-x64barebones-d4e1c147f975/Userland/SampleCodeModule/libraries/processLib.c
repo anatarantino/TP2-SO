@@ -50,3 +50,7 @@ void yield(){
 void wait(uint64_t pid){
     syscalls(WAIT,pid,0,0,0,0,0);
 }
+
+void skip(){
+    syscalls(SKIP,0,0,0,0,0,0);
+}

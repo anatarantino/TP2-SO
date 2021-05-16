@@ -37,6 +37,7 @@
 #define PIPE_WRITE 31
 #define PIPE_LIST 32
 #define WAIT 33
+#define SKIP 34
 
 #define TOTALREGS 16
 #define CANT_SYS 33
