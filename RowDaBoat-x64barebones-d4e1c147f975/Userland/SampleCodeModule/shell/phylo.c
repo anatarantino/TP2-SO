@@ -1,0 +1,267 @@
+#include <phylo.h>
+#include <shell.h>
+#include <strings.h>
+#include <prints.h>
+#include <colors.h>
+#include <semLib.h>
+#include <processLib.h>
+
+#define MAX_PHYLO 10
+#define MIN_PHYLO 2
+#define NAME_LEN 10
+#define EATING 1
+#define WAITING 2
+#define PHYLO_NAME "_phy"
+
+static void analizeChar(char c);
+static int initializePhylo(int phyloCount);
+static void printTableState(int index, int state);
+static int leftPhylo(int args, char *arguments[]);
+static int rightPhylo(int args, char *arguments[]);
+static void updateTable(uint16_t phylo_id, int state);
+static void addPhylo();
+static void removePhylo();
+static void takeLeftFork(uint16_t phylo_id);
+static void takeRightFork(uint16_t phylo_id);
+static void realeaseRigthFork(uint16_t phy_id);
+static void realeaseLeftFork(uint16_t phy_id);
+static void freeResources();
+static void freeRightFork(uint16_t phylo);
+static void printTableState(int index, int state);
+static void updateTable(uint16_t phylo_id, int state);
+
+typedef struct phylo{
+    uint8_t state;
+    uint8_t pid;
+    uint8_t run;
+    uint8_t right_fork;
+}t_phylo;
+
+static int phy_count;
+static int forks[MAX_PHYLO];
+static char table[MAX_PHYLO + 1];
+static t_phylo phylos[MAX_PHYLO];
+
+
+void phylo(int args, char *arguments[]){
+    if(args!=2){
+        invalidAmount();
+        return;
+    }
+    phy_count=atoi(arguments[1]);
+    if(phy_count > MAX_PHYLO){
+        phy_count=MAX_PHYLO;
+    }else if(phy_count < MIN_PHYLO){
+        phy_count=MIN_PHYLO;
+    }
+
+    if(initializePhylo(phy_count)==ERROR){
+        printColor("Error initializing phylo",RED,BLACK);
+        return;
+    }
+    int c;
+    analizeChar(c);
+    freeResources();
+
+}
+
+static void analizeChar(char c){
+    while ((c = getchar()) != -1) {
+        if((char)c == 'a' || (char)c == 'A') {
+            addPhylo();
+        }
+        else if((char)c == 'r' || (char)c == 'R'){
+            removePhylo();
+        }
+    }
+}
+
+static int initializePhylo(int phyloCount){
+    char phy_name[NAME_LEN];
+    char phy_id[NAME_LEN];
+
+    for(int i=0;i<phy_count;i++){
+        uintToBase(i,phy_name, 10);
+        strcat(phyloName, PHYLO_NAME);
+        uintToBase(i, phy_id, 10);
+        uint64_t * sem_op=sem_open(phy_name,1);
+        if(forks[i]!=ERROR){
+            forks[i]=sem_op;
+        }else{
+            return ERROR;
+        }
+        table[i]='.';
+        phylos[i].state=WAITING;
+        phylos[i].run=1;
+        phylos[i].right_fork=0;
+
+        char* arguments[]={phy_name,phy_id};
+        phylos[i].pid=addProcess((i % 2 == 0)? rightPhylo : LeftPhylo, 0, 2, arguments, NULL);
+
+        printf("Added to table phylosopher ");
+        printInt(i+1);
+
+    }
+}
+
+static int leftPhylo(int args, char *arguments[]){
+    uint16_t phy_id=atoi(arguments[0]);
+    if(phy_id%2 != 0){
+        return 1;
+    }
+    while(phylos[phy_id].run){
+        sleep(2*10);
+        takeRightFork(phy_id);
+        takeLeftFork(phy_id);
+
+        phylos[phy_id].state=EATING;
+        updateTable(phy_id,EATING);
+        sleep(5);
+
+        updateTable(phy_id,WAITING);
+        freeLeftFork(phy_id);
+        freeRigthFork(phy_id);
+        phylos[phy_id].state=WAITING;
+    }
+    return 0;
+}
+
+static int rightPhylo(int args, char *arguments[]){
+    uint16_t phy_id=atoi(arguments[0]);
+    if(phy_id%2 != 0){
+        return 1;
+    }
+    while(phylos[phy_id].run){
+        sleep(2*10);
+        takeLeftFork(phy_id);
+        takeRightFork(phy_id);
+
+        phylos[phy_id].state=EATING;
+        updateTable(phy_id,EATING);
+        sleep(5);
+
+        updateTable(phy_id,WAITING);
+        realeaseRigthFork(phy_id);
+        realeaseLeftFork(phy_id);
+        phylos[phy_id].state=WAITING;
+    }
+    return 0;
+}
+
+static void addPhylo(){
+    if(phy_count>=MAX_PHYLO){
+        return;
+    }
+    char phy_name[NAME_LEN]="PHYLO_";
+    char phy_id[NAME_LEN];
+    uint16_t phylo=phy_count;
+
+    uintToBase(phylo,phy_name,10);
+    uintToBase(phylo,phy_id,10);
+    strcat(phy_name,PHYLO_NAME);
+
+    phylos[phylo].state=WAITING;
+    table[phylo]='.';
+    phylos[phylo].run=1;
+    phylos[phylo].right_fork=0;
+
+    freeRightFork(phylo-1);
+
+    forks[phylo]=sem_open(phy_name,1);
+    phy_count++;
+
+    unblockProcess(phylos[phylo-1].pid);
+
+    char* arguments[]={phy_name,phy_id};
+    phylos[phylo].pid=addProcess((i % 2 == 0)? rightPhylo : LeftPhylo, 0, 2, arguments, NULL);
+
+
+}
+
+static void removePhylo(){
+    if(phy_count<=MIN_PHYLO){
+        return;
+    }
+    uint16_t phylo=phy_count-1;
+    uint16_t phylo_left=phylo-1;
+
+    phylos[phylo].run=0;
+    freeRightFork(phylo_left);
+    wait(phylos[phylo].pid);
+
+    table[phylo]=0;
+
+    phy_count--;
+
+    unblockProcess(phylos[phylo_left].pid);
+
+    sem_close(forks[phylo]);
+
+    printf("Leaving table phylosopher ");
+    printInt(i+1);
+}
+
+static void takeLeftFork(uint16_t phylo_id){
+    phylos[phylo_id].right_fork = 1;
+    sem_wait(forks[phylo_id]);
+}
+
+static void takeRightFork(uint16_t phylo_id){
+    phylos[phylo_id].right_fork = 1;
+    sem_wait(forks[(phylo_id + 1) % phy_count]);
+}
+
+static void realeaseRigthFork(uint16_t phy_id){
+    sem_post(forks[(phy_id+1)%phy_count]);
+    phylos[phy_id].right_fork=0;
+}
+
+static void realeaseLeftFork(uint16_t phy_id){
+    sem_post(forks[phy_id]);
+}
+
+static void freeResources(){
+    for(uint16_t i = 0; i < phy_count; i++)
+        phylos[i].run = 0;
+
+    for(uint16_t i = 0; i < phy_count; i++)
+        wait(phylos[i].pid);
+
+    for(uint16_t i = 0; i < phy_count; i++)
+        sem_close(forks[i]);
+    
+    phy_count = 0;
+
+    for(uint16_t i = 0; table[i] != 0; i++)
+        table[i] = 0;
+}
+
+static void freeRightFork(uint16_t phylo){
+    while(1){
+        if(block(phylos[phylo].pid)==1){
+            yield();
+        }else if(phylos[phylo].right_fork){
+            unblockProcess(phylos[phylo].pid);
+            yield();
+        }else{
+            return;
+        }
+    }
+}
+
+static void printTableState(int index, int state) {
+    if(state == WAITING){
+        table[index]='.';
+    }else{
+        table[index]='E';
+    }
+    printf(table);
+}
+
+static void updateTable(uint16_t phylo_id, int state){
+    if(state==EATING){
+        table[phylo_id]='E';
+    }else{
+        table[phylo_id]='.'
+    }
+}

@@ -151,3 +151,36 @@ int strtok(char * str, const char delim, char * array[], int arraySize){
 	}
 	return index;
 }
+
+char* strcat(char* destination, char* source){
+  char* ptr = destination + strlen(destination);
+    while (*source != '\0') {
+        *ptr++ = *source++;
+    }
+    *ptr = '\0';
+    return destination;
+}
+
+char * strcopy(char * dest,char* src){
+	if(src == 0){
+		return 0;
+	}
+	int i;
+	for(i=0 ; i<strlen(src) ; i++){
+		dest[i] = src[i];
+	}
+	dest[i]=0;
+	return dest;
+}
+
+int atoi(char * s){
+    if(s == NULL)
+        return 0;
+
+    int res = 0;
+
+    for (int i = 0; s[i] != '\0'; ++i) 
+        res = res * 10 + s[i] - '0';
+
+    return res; 
+}

@@ -44,7 +44,6 @@ static void clear(int args, char *arguments[]);
 static void divisionByZero(int args,char *arguments[]);
 static void opCodeException(int args,char *arguments[]);
 static void cleanBuffer();
-static void invalidAmount();
 static void ps(int args, char *arguments[]);
 static void loop(int args, char *arguments[]);
 static void kill(int args, char *arguments[]);
@@ -420,7 +419,7 @@ static void cleanBuffer(){
 	index=0;
 }
 
-static void invalidAmount(){
+void invalidAmount(){
     newln();
     printColor("Invalid ammount of arguments", RED, BLACK);
     printu();
