@@ -12,6 +12,5 @@ void killProcess(uint64_t pid);
 uint64_t getPidProcess();
 void loopProcess();
 void yield();
-void skip();
 
 #endif

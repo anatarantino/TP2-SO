@@ -390,8 +390,3 @@ void wait(uint64_t pid){
             blockProcess(currentProcess->control_block.pid);
       }
 }
-
-void skip(){
-    ticksLeft = 0;
-    callTimerTick();
-}

@@ -100,9 +100,6 @@ uint64_t syscallDispatcher(t_registers * r){
             case WAIT:
                 wait((uint64_t)r->rdi);
                 break;
-            case SKIP:
-                skip();
-                break;
         }    
     }
     return 0;
