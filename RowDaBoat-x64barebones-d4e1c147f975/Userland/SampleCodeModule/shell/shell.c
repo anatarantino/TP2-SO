@@ -609,7 +609,8 @@ static void phylo(int args, char *arguments[]){
         invalidAmount();
         newln();
         return;
-    }  
+    }
+    newln();  
     int count = atoi(arguments[1]);
     phyloFunc(count);
     // Aca va la funcion que llama a phylo
