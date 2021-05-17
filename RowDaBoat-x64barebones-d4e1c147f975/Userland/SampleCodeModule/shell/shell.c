@@ -11,6 +11,7 @@
 #include <ipcLib.h>
 #include <memoryLib.h>
 #include <semLib.h>
+#include <phylo.h>
 
 #define TOTAL_SIZE 150
 #define TOTAL_COMMANDS 21
@@ -20,7 +21,7 @@
 
 enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE,PSS,LOOPS,KILLS,NICES,BLOCKS,UNBLOCKS, MEMS, SEMS, CATS, WCS, FILTERS, PIPES, PHYLOS};
 
-static char * commands[] = {"inforeg","printmem","time","chess","help","clear","divByZeroException","opCodeException","ps","loop","kill","nice","block","unblock", "mem", "sem", "cat", "wc", "filer", "pipe", "phylo"};
+//static char * commands[] = {"inforeg","printmem","time","chess","help","clear","divByZeroException","opCodeException","ps","loop","kill","nice","block","unblock", "mem", "sem", "cat", "wc", "filer", "pipe", "phylo"};
 static char * user = "grupo6@user:~$ ";
 
 static char * registers[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ", "R9:  ",
@@ -35,7 +36,7 @@ static int index=0,flag=1;
 static void printMessage();
 static void analizeChar(char c);
 static void processCommand();
-static void applyCommand(int command_num,char*arguments[],int totArgs);
+//static void applyCommand(int command_num,char*arguments[],int totArgs);
 static void removeChar();
 static void inforeg(int args, char *arguments[]);
 static void printmem(int args, char *arguments[]);
@@ -135,8 +136,8 @@ static void processCommand(){
 
     int totArgs = strtok(buff,' ', argv, TOTAL_ARGUMENTS);
 
-    int flag=0;
-    int comm = -1;
+    //int flag=0;
+    //int comm = -1;
     uint8_t fg = 1;
 
     if(argv[totArgs - 1][0] == '&') {
@@ -171,7 +172,7 @@ static void processCommand(){
     // }
     
 }
-
+/*
 static void applyCommand(int command_num,char *arguments[],int totArgs){
     switch (command_num)
     {
@@ -239,7 +240,7 @@ static void applyCommand(int command_num,char *arguments[],int totArgs){
         phylo(totArgs,arguments);
         break;
     }
-}
+}*/
 
 static void removeChar(){
     if(index>0){
@@ -564,7 +565,7 @@ static void sem(int args, char *arguments[]){
 }
 
 static void cat(int args, char *arguments[]){
-    if(args!=1){
+    if(args!=2){
         invalidAmount();
         newln();
         return;
@@ -574,7 +575,7 @@ static void cat(int args, char *arguments[]){
 }
 
 static void wc(int args, char *arguments[]){
-    if(args!=1){
+    if(args!=2){
         invalidAmount();
         newln();
         return;
@@ -584,7 +585,7 @@ static void wc(int args, char *arguments[]){
 }
 
 static void filter(int args, char *arguments[]){
-    if(args!=1){
+    if(args!=2){
         invalidAmount();
         newln();
         return;
@@ -609,6 +610,8 @@ static void phylo(int args, char *arguments[]){
         newln();
         return;
     }  
+    int count = atoi(arguments[1]);
+    phyloFunc(count);
     // Aca va la funcion que llama a phylo
     printu();
 }

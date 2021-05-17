@@ -1,12 +1,14 @@
 #include <ipcLib.h>
 #include <syscall.h>
+#include <prints.h>
+#include <strings.h>
 
 int pinit(){
     return syscalls(PIPE_INIT,0,0,0,0,0,0);
 }
 
 int popen(char * name){
-    return syscalls(PIPE_OPEN,name,0,0,0,0,0);
+    return syscalls(PIPE_OPEN,(uint64_t)name,0,0,0,0,0);
 }
 
 int pclose(int index){

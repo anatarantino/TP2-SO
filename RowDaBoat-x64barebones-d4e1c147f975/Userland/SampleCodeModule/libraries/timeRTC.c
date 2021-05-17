@@ -8,3 +8,11 @@ uint8_t getTime(time_type descriptor){
 uint64_t ticks_elapsed(){
     return syscalls(TICKSELAPSED,0,0,0,0,0,0);
 }
+
+void sleep(uint16_t ticks){
+    ticks += ticks_elapsed();
+    while(ticks > ticks_elapsed()){
+        _hlt();
+    }  
+    return;
+}

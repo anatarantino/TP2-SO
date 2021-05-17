@@ -17,4 +17,6 @@ uint8_t getTime(time_type descriptor);
 
 uint64_t ticks_elapsed();
 
+void sleep(uint16_t ticks);
+
 #endif

@@ -2,7 +2,8 @@
 #define PHYLO_H
 
 #define ERROR -1
+#define NULL 0
 
-void phylo(int args, char *arguments[]);
+void phyloFunc(int count);
 
 #endif

@@ -384,9 +384,9 @@ void yield(){
 }
 
 void wait(uint64_t pid){
-      process_node * p=getProcessByPID(pid);
+      process_node * p=getProcess(pid);
       if (p != NULL) {
             p->control_block.foreground=1;
-            blockProcess(currentProcess->control_block.pid);
+            block(currentProcess->control_block.pid);
       }
 }

@@ -1,4 +1,5 @@
-GLOBAL syscalls:
+GLOBAL syscalls
+GLOBAL _hlt
 
 section .text
 
@@ -55,3 +56,8 @@ syscalls:
     pop rbp
 
     ret
+
+_hlt:
+	sti
+	hlt
+	ret
