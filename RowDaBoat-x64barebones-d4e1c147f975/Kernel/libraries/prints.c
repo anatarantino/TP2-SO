@@ -87,7 +87,7 @@ void printHexColor(uint64_t num, uint64_t f_color, uint64_t bg_color){
 }
 
 void printInt(uint64_t num){
-    char buff[10]={0};
+    char buff[40]={0};
     uintToBase(num,buff,10);
     printf(buff);
 }

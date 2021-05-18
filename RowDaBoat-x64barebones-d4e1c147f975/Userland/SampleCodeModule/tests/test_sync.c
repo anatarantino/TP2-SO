@@ -24,6 +24,7 @@ static int inc(int args, char **argv){
   int N = atoi(argv[3]);
   int semIndex;
   uint64_t i;
+
   printf("val: ");
   printInt(value);
   if (sem){

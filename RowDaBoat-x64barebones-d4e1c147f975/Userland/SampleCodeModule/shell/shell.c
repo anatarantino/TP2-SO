@@ -65,6 +65,7 @@ static void pipe(int args, char *arguments[]);
 static void phylo(int args, char *arguments[]);
 static void testMM(int args, char *arguments[]);
 static void testSync(int args, char *arguments[]);
+static void testNoSync(int args, char *arguments[]);
 static void testProcesses(int args, char *arguments[]);
 static void testPriority(int args, char *arguments[]);
 
@@ -91,8 +92,8 @@ static t_command functions[] = {
     {&pipe, "pipe","pipe -> prints all the pipes with their properties.\n"},
     {&phylo, "phylo","phylo -> dining philosophers problem, receives a starting number of phylosophers (maximum: 10, minimum: 2).\n"},
     {&testMM, "testMM","testMM -> tests memory manager.\n"},
-    //{&testSync, "testSync","testSync -> tests semaphore's sync.\n"},
-    //{&testNoSync, "testNoSync","testNoSync -> tests semaphore's sync.\n"},
+    {&testSync, "testSync","testSync -> tests semaphore's sync.\n"},
+    {&testNoSync, "testNoSync","testNoSync -> tests semaphore's sync.\n"},
     {&testProcesses, "testProcesses","testProcesses -> tests process creation.\n"},
     {&testPriority, "testPriority","testPriority -> tests scheduler priority."},
 };
@@ -627,4 +628,29 @@ static void testSync(int args, char *arguments[]){
     }
     test_sync();
 }
-*/
+
+static void testNoSync(int args, char *arguments[]){
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    test_no_sync();
+}
+
+static void testProcesses(int args, char *arguments[]){
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    test_processes();
+}
+static void testPriority(int args, char *arguments[]){
+if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    test_prio();
+}

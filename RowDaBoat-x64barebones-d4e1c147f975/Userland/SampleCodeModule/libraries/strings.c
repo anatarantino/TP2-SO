@@ -174,15 +174,16 @@ char * strcopy(char * dest,char* src){
 }
 
 int atoi(char * s){
-    if(s == 0){
-      return 0;
-    }
-        
-    int res = 0;
-
-    for (int i = 0; s[i] != '\0'; ++i){
-      res = res * 10 + s[i] - '0';
-    }
-
-    return res; 
+  int res = 0;
+  int i = 0;
+  int sign = 1;
+  if(s[i] == '-'){
+    sign=-1;
+    i++;
+  }
+  
+  for ( ; s[i] != '\0'; ++i){
+    res = res * 10 + s[i] - '0';
+  }
+  return res * sign; 
 }
