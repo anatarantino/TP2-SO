@@ -67,8 +67,6 @@ int main(){
 
     initializeSch();
 
-	sem_init();
-
 	char* argv[] = {"Sample Code Module"};
 	addProcess(sampleCodeModuleAddress,1,argv,1);
 	printf("antes del halt\n");

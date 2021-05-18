@@ -635,12 +635,10 @@ static void testMM(int args, char *arguments[]){
 
 
 static void testSync(int args, char *arguments[]){
-    /*
     if(args!=1){
         invalidAmount();
         newln();
         return;
     }
     test_sync();
-    */
 }
