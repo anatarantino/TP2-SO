@@ -31,8 +31,8 @@ static void freeRightFork(uint16_t phylo);
 static void updateTable(uint16_t phylo_id, int state);
 
 typedef struct phylo{
-    uint8_t state;
-    uint8_t pid;
+    uint64_t state;
+    uint64_t pid;
     uint8_t run;
     uint8_t right_fork;
 }t_phylo;
@@ -89,57 +89,92 @@ static int initializePhylo(int phyloCount){
         phylos[i].run=1;
         phylos[i].right_fork=0;
         char* arguments[]={phy_name,phy_id};
-        phylos[i].pid=addProcess((i % 2 == 0)? (void *)&rightPhylo : (void *)&leftPhylo, 0, arguments, 2);
-
         printf("Added to table phylosopher ");
         printInt(i+1);
         newln();
+        phylos[i].pid=addProcess((i % 2 == 0)? rightPhylo : leftPhylo, 2, arguments, 0);
     }
-
-
-    return 0;
+    return 1;
 }
 
 static int leftPhylo(int args, char *arguments[]){
-    uint16_t phy_id=atoi(arguments[0]);
-    if(phy_id%2 != 0){
+    uint16_t phy_id=atoi(arguments[1]);
+    if(phy_id % 2 == 0){
         return 1;
     }
     while(phylos[phy_id].run){
-        sleep(20);
+    
+        sleep(2);
+
+        sem_wait(forks[phy_id]);  //wait left fork
+
+        phylos[phy_id].right_fork = 1;
+        sem_wait(forks[(phy_id + 1) % phy_count]);  //wait right fork
+
+        updateTable(phy_id, EATING);
+        sleep(1);
+
+        sem_post(forks[(phy_id + 1) % phy_count]);
+        phylos[phy_id].right_fork = 0;
+
+        sem_post(forks[phy_id]);
+
+        table[phy_id] = '.';
+/*
+        sleep(50);
         takeRightFork(phy_id);
         takeLeftFork(phy_id);
 
         phylos[phy_id].state=EATING;
         updateTable(phy_id,EATING);
-        sleep(5);
+        sleep(50);
 
         updateTable(phy_id,WAITING);
         releaseLeftFork(phy_id);
         releaseRightFork(phy_id);
         phylos[phy_id].state=WAITING;
+        */
     }
     return 0;
 }
 
 static int rightPhylo(int args, char *arguments[]){
-    uint16_t phy_id=atoi(arguments[0]);
-    if(phy_id%2 != 0){
+    uint16_t phy_id=atoi(arguments[1]);
+    if(phy_id % 2 != 0){
         return 1;
     }
     while(phylos[phy_id].run){
-        sleep(2*10);
+        
+            phylos[phy_id].right_fork = 1;
+            sem_wait(forks[(phy_id + 1) % phy_count]);  //wait right fork
+
+            sem_wait(forks[phy_id]);  //wait left fork
+
+            updateTable(phy_id, EATING);
+            sleep(10);
+
+            sem_post(forks[phy_id]);
+
+            sem_post(forks[(phy_id + 1) % phy_count]);
+            phylos[phy_id].right_fork = 0;
+
+            table[phy_id] = '.';
+        
+
+/*
+
+        sleep(50);
         takeLeftFork(phy_id);
         takeRightFork(phy_id);
-
         phylos[phy_id].state=EATING;
         updateTable(phy_id,EATING);
-        sleep(5);
+        sleep(50);
 
         updateTable(phy_id,WAITING);
         releaseRightFork(phy_id);
         releaseLeftFork(phy_id);
         phylos[phy_id].state=WAITING;
+        */
     }
     return 0;
 }
@@ -148,7 +183,7 @@ static void addPhylo(){
     if(phy_count>=MAX_PHYLO){
         return;
     }
-    char phy_name[NAME_LEN]="PHYLO_";
+    char phy_name[NAME_LEN];
     char phy_id[NAME_LEN];
     uint16_t phylo=phy_count;
 
@@ -168,9 +203,11 @@ static void addPhylo(){
 
     unblockProcess(phylos[phylo-1].pid);
 
+    printf("Added to table phylosopher ");
+    printInt(phylo+1);
+    newln();
     char* arguments[]={phy_name,phy_id};
-    phylos[phylo].pid=addProcess((phylo % 2 == 0)? (void *)&rightPhylo : (void *)&leftPhylo, 0, arguments, 2);
-
+    phylos[phylo].pid=addProcess((phylo % 2 == 0)? rightPhylo : leftPhylo, 2, arguments, 0);
 
 }
 
@@ -195,6 +232,7 @@ static void removePhylo(){
 
     printf("Leaving table phylosopher ");
     printInt(phylo+1);
+    newln();
 }
 
 static void takeLeftFork(uint16_t phylo_id){
@@ -217,19 +255,23 @@ static void releaseLeftFork(uint16_t phy_id){
 }
 
 static void freeResources(){
-    for(uint16_t i = 0; i < phy_count; i++)
+    for(uint16_t i = 0; i < phy_count; i++){
         phylos[i].run = 0;
+    }
 
-    for(uint16_t i = 0; i < phy_count; i++)
+    for(uint16_t i = 0; i < phy_count; i++){
         wait(phylos[i].pid);
+    }
 
-    for(uint16_t i = 0; i < phy_count; i++)
+    for(uint16_t i = 0; i < phy_count; i++){
         sem_close(forks[i]);
+    }
     
     phy_count = 0;
 
-    for(uint16_t i = 0; table[i] != 0; i++)
+    for(uint16_t i = 0; table[i] != 0; i++){
         table[i] = 0;
+    }
 }
 
 static void freeRightFork(uint16_t phylo){
@@ -251,4 +293,6 @@ static void updateTable(uint16_t phylo_id, int state){
     }else{
         table[phylo_id]='.';
     }
+    printf(table);
+    newln();
 }
