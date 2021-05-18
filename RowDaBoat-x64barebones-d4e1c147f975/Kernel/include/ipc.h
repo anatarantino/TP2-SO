@@ -14,16 +14,16 @@ typedef struct pipe_node{
     char buff[MAX_BUFF];
     int activity;
     int processes;
-    void * readSem;
-    void * writeSem;
+    int readSem;
+    int writeSem;
     int writePos;
     int readPos;
 } pipe_node;
 
 typedef struct pipes_array{
     pipe_node parray[PIPES_MAX];
-    void * newPipe;
-    void * endPipe; 
+    int newPipe;
+    int endPipe; 
 } pipes_array;
 
 int pinit();

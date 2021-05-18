@@ -38,7 +38,7 @@ typedef struct phylo{
 }t_phylo;
 
 static int phy_count;
-static uint64_t * forks[MAX_PHYLO];
+static uint64_t forks[MAX_PHYLO];
 static char table[MAX_PHYLO + 1];
 static t_phylo phylos[MAX_PHYLO];
 
@@ -79,7 +79,7 @@ static int initializePhylo(int phyloCount){
         uintToBase(i,phy_name, 10);
         strcat(phy_name, PHYLO_NAME);
         uintToBase(i, phy_id, 10);
-        uint64_t * sem_op=sem_open(phy_name,1);
+        uint64_t sem_op=sem_open(phy_name,1);
         if(forks[i]!=NULL){
             forks[i]=sem_op;
         }else{

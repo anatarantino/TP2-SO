@@ -122,7 +122,7 @@ int sem_close(int index){
 
 void sem_changeValue(int index, uint64_t value){
     if(index > dim || index < 0){
-        return ERROR;
+        return;
     }
     sem_t * sem = &sems[index];
     exchanging(&sem->lock, LOCK);
@@ -132,14 +132,13 @@ void sem_changeValue(int index, uint64_t value){
 
 void sems_print(){
     printf("\nNAME   VALUE    BLOCKED PROCESSES PID'S\n");
-    sem_t * sem;
     for(int i=0; i<dim; i++){
-        sem = &sems[i];
-        sem_print(sem);
+        sem_print(i);
     }
 }
 
-void sem_print(sem_t * sem){
+void sem_print(int index){
+    sem_t * sem = &sems[index];
     exchanging(&sem->lock, LOCK);
     printf(sem->name);
     printf("\t\t\t");

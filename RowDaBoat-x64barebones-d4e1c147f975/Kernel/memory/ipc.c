@@ -11,7 +11,7 @@ static pipes_array pipes;
 int pinit(){ 
     pipes.newPipe = sem_open("newPipe", 1);
     pipes.endPipe = sem_open("endPipe", 1);
-    if( pipes.newPipe == NULL || pipes.endPipe == NULL){
+    if( pipes.newPipe == ERROR || pipes.endPipe == ERROR){
         return ERROR;
     }
     return 0;
@@ -33,12 +33,12 @@ static int pcreate(char * name, int index){
 
     strcopycat(str, name, "_r");
     pipe->readSem = sem_open(str,0);
-    if(pipe->readSem == NULL){
+    if(pipe->readSem == ERROR){
         return ERROR;
     }
     strcopycat(str, name, "_w");
     pipe->writeSem = sem_open(str, MAX_BUFF);
-    if(pipe->writeSem == NULL){
+    if(pipe->writeSem == ERROR){
         return ERROR;
     }
     return 0;
@@ -48,14 +48,18 @@ int popen(char * name){
     if(name == NULL){
         return ERROR;
     }
-    sem_wait(pipes.newPipe);
+    if((sem_wait(pipes.newPipe)) == ERROR){
+        return ERROR;
+    }
     int i;
     int available = -1;
     for(i=0; i<PIPES_MAX; i++){
         if(pipes.parray[i].activity == 1){
             if(strcmp(pipes.parray[i].name, name) == 0){
                 pipes.parray[i].processes++;
-                sem_post(pipes.newPipe);
+                if((sem_post(pipes.newPipe)) == ERROR){
+                    return ERROR;
+                }
                 return i;
             }
         }
@@ -68,7 +72,9 @@ int popen(char * name){
     if(i == PIPES_MAX){
         i = pcreate(name, available);
         if ( i != -1){
-            sem_post(pipes.newPipe);
+            if((sem_post(pipes.newPipe)) == ERROR){
+                    return ERROR;
+                }
             return i;
         }
     }
@@ -80,18 +86,24 @@ int pclose(int index){
     if(index < 0 || index >= PIPES_MAX || pipes.parray[index].activity == 0){
         return ERROR;
     }
-    sem_wait(pipes.endPipe);
+    if((sem_wait(pipes.endPipe)) == ERROR){
+        return ERROR;
+    }
     pipe_node* pipe = &pipes.parray[index];
     pipe->processes--;
     if(pipe->processes > 0){
-        sem_post(pipes.endPipe);
+        if((sem_post(pipes.endPipe)) == ERROR){
+            return ERROR;
+        }
         return 0;
     }
-    if((sem_close(pipe->readSem) == -1) || (sem_close(pipe->writeSem) == -1)){
+    if((sem_close(pipe->readSem) == ERROR) || (sem_close(pipe->writeSem) == ERROR)){
         return ERROR;
     }
     pipe->activity = 0;
-    sem_post(pipes.endPipe);
+    if((sem_post(pipes.endPipe)) == ERROR){
+        return ERROR;
+    }
     return 0;
 }
 
@@ -100,12 +112,12 @@ char pread(int index){
         return ERROR;
     }
     pipe_node* pipe = &pipes.parray[index];
-    if(sem_wait(pipe->readSem) == -1){
+    if(sem_wait(pipe->readSem) == ERROR){
         return ERROR;
     }
     char ret = pipe->buff[pipe->readPos];
     pipe->readPos = (pipe->readPos + 1) % MAX_BUFF; 
-    if(sem_post(pipe->writeSem) == -1){
+    if(sem_post(pipe->writeSem) == ERROR){
         return ERROR;
     }
     return ret;
@@ -116,12 +128,12 @@ int pwrite(int index, char c){
         return ERROR;
     }
     pipe_node* pipe = &pipes.parray[index];
-    if(sem_wait(pipe->writeSem) == -1){
+    if(sem_wait(pipe->writeSem) == ERROR){
         return ERROR;
     }
     pipe->buff[pipe->writePos] = c;
     pipe->writePos = (pipe->writePos + 1) % MAX_BUFF; 
-    if(sem_post(pipe->readSem) == -1){
+    if(sem_post(pipe->readSem) == ERROR){
         return ERROR;
     }
     return 0;
@@ -146,7 +158,7 @@ static void printPipe(pipe_node * pipe){
     printNewLine();
 
     printf("Semaphores blocked: \n");
-    GIT(pipe->readSem);
+    sem_print(pipe->readSem);
     printNewLine();
     sem_print(pipe->writeSem);
     printNewLine();
