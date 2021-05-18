@@ -2,7 +2,7 @@
 #include <syscall.h>
 
 uint64_t * sem_open(char * name, uint64_t value){
-    return syscalls(SEM_OPEN,name,value,0,0,0,0);
+    return syscalls(SEM_OPEN,(uint64_t)name,value,0,0,0,0);
 }
 
 int sem_wait(uint64_t * sem){

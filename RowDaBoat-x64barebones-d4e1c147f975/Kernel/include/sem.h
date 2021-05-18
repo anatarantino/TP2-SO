@@ -20,25 +20,20 @@ typedef struct sem_t{
     process_node * lastInLine;
 } sem_t;
 
-typedef struct sem_list{
-    sem_t * first;
-}sem_list;
-
-
 int sem_init();
 
-sem_t * sem_open(char * name, uint64_t value);     //returns semaphore descriptor or failure code
+int sem_open(char * name, uint64_t value);     //returns semaphore descriptor or failure code
 
-int sem_wait(sem_t * sem);  //if successfull returns 0, else -1 or error
+int sem_wait(int index);  //if successfull returns 0, else -1 or error
 
-int sem_post(sem_t * sem);  //if successfull returns 0, else -1 or error
+int sem_post(int index);  //if successfull returns 0, else -1 or error
 
-int sem_close(sem_t * sem); //if successfull returns 0, else -1 or error
+int sem_close(int index); //if successfull returns 0, else -1 or error
 
-void sem_changeValue(sem_t * sem, uint64_t value);
+void sem_changeValue(int index, uint64_t value);
 
 void sems_print();
 
-void sem_print(sem_t * sem);
-
+void sem_print(sem_t * sem);    //este esta bien porque solo se usa en kernel en un lugar donde guardamos semaforos
+// chequear que eso no de error though
 #endif

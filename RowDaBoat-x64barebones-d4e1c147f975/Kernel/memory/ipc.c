@@ -146,7 +146,7 @@ static void printPipe(pipe_node * pipe){
     printNewLine();
 
     printf("Semaphores blocked: \n");
-    sem_print(pipe->readSem);
+    GIT(pipe->readSem);
     printNewLine();
     sem_print(pipe->writeSem);
     printNewLine();

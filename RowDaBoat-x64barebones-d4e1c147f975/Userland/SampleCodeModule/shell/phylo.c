@@ -50,7 +50,6 @@ void phyloFunc(int count){
     }else if(phy_count < MIN_PHYLO){
         phy_count=MIN_PHYLO;
     }
-    prin
     if(initializePhylo(phy_count)==ERROR){
         printColor("Error initializing phylo",RED,BLACK);
         return;
