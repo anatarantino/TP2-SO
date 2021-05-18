@@ -44,7 +44,7 @@ static void remove(process_node* process);
 static int isEmpty();
 static process_node* getProcess(uint64_t pid);
 static uint64_t initializeProcess(pcb * process, char* argv, uint8_t fg);
-static void initializeStackFrame(uint64_t rbp,void (*process)(int, char **),int argc, char** argv);
+static void initializeStackFrame(uint64_t rbp,int (*process)(int, char **),int argc, char** argv);
 static uint64_t newPid();
 static void printProcess(pcb block);
 static int changeState(uint64_t pid, int state);
@@ -94,7 +94,7 @@ uint64_t scheduler(uint64_t rsp){
     return currentProcess->control_block.rsp;
 }
 
-uint64_t addProcess(void (*process)(int,char**),int argc, char** argv, uint8_t fg){
+uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg){
     if(process == NULL){
         return 0;
     }
@@ -169,7 +169,7 @@ static uint64_t initializeProcess(pcb * process, char* argv, uint8_t fg){
     return 0;
 }
 
-static void initializeStackFrame(uint64_t rbp,void (*process)(int, char **),int argc, char** argv){
+static void initializeStackFrame(uint64_t rbp,int (*process)(int, char **),int argc, char** argv){
     stackFrame * sframe = (stackFrame *)rbp-1;
 
     sframe->gs = 0x01; 

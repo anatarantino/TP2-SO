@@ -56,7 +56,7 @@ uint64_t syscallDispatcher(t_registers * r){
                 ps();
                 break;
             case BLOCK:
-                block((uint64_t)r->rdi);
+                return block((uint64_t)r->rdi);
                 break;
             case NICE:
                 nice((uint64_t)r->rdi, (uint64_t)r->rsi);
@@ -64,7 +64,7 @@ uint64_t syscallDispatcher(t_registers * r){
             case GETPID:
                 return getPid();
             case ADD_PROCESS:
-                return addProcess((void (*)(int, char **))r->rdi,(int)r->rsi,(char **)r->rdx,(uint8_t)r->r10);
+                return addProcess((int (*)(int, char **))r->rdi,(int)r->rsi,(char **)r->rdx,(uint8_t)r->r10);
             case UNBLOCK:
                 return unblock((uint64_t)r->rdi);  
             case YIELD:
