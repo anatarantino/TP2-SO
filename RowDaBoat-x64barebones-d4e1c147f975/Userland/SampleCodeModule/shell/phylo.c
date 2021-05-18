@@ -106,10 +106,10 @@ static int leftPhylo(int args, char *arguments[]){
     
         sleep(2);
 
-        sem_wait(forks[phy_id]);  //wait left fork
+        sem_wait(forks[phy_id]);
 
         phylos[phy_id].right_fork = 1;
-        sem_wait(forks[(phy_id + 1) % phy_count]);  //wait right fork
+        sem_wait(forks[(phy_id + 1) % phy_count]);
 
         updateTable(phy_id, EATING);
         sleep(1);
@@ -146,10 +146,9 @@ static int rightPhylo(int args, char *arguments[]){
     while(phylos[phy_id].run){
         
             phylos[phy_id].right_fork = 1;
-            sem_wait(forks[(phy_id + 1) % phy_count]);  //wait right fork
+            sem_wait(forks[(phy_id + 1) % phy_count]);
 
-            sem_wait(forks[phy_id]);  //wait left fork
-
+            sem_wait(forks[phy_id]);
             updateTable(phy_id, EATING);
             sleep(10);
 
