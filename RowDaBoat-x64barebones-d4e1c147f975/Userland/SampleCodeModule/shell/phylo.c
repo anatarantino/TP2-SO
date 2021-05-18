@@ -78,24 +78,25 @@ static int initializePhylo(int phyloCount){
     for(int i=0;i<phy_count;i++){
         uintToBase(i,phy_name, 10);
         strcat(phy_name, PHYLO_NAME);
-        uintToBase(i, phy_id, 10);
-        uint64_t sem_op=sem_open(phy_name,1);
-        if(forks[i]!=NULL){
-            forks[i]=sem_op;
-        }else{
-            return ERROR;
-        }
+        forks[i]=sem_open(phy_name,1);
         table[i]='.';
+    }
+    for(int i=0;i<phy_count;i++){
+        uintToBase(i, phy_name, 10);
+        strcat(phy_name, PHYLO_NAME);
+        uintToBase(i, phy_id, 10);
         phylos[i].state=WAITING;
         phylos[i].run=1;
         phylos[i].right_fork=0;
-
         char* arguments[]={phy_name,phy_id};
         phylos[i].pid=addProcess((i % 2 == 0)? (void *)&rightPhylo : (void *)&leftPhylo, 0, arguments, 2);
 
         printf("Added to table phylosopher ");
         printInt(i+1);
+        newln();
     }
+
+
     return 0;
 }
 
