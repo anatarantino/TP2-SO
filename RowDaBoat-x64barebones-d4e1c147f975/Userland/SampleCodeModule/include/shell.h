@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 typedef struct t_command {
-    int (*command)(int, char **);
+    void (*command)(int, char **);
     char *name;
     char *description;
 }t_command;
