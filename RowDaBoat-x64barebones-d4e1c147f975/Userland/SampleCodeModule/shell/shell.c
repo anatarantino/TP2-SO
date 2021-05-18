@@ -12,9 +12,10 @@
 #include <memoryLib.h>
 #include <semLib.h>
 #include <phylo.h>
+#include <tests.h>
 
 #define TOTAL_SIZE 150
-#define TOTAL_COMMANDS 21
+#define TOTAL_COMMANDS 23
 #define TOTAL_REG 17
 #define TOTAL_ARGUMENTS 5
 #define STLINE 43
@@ -62,6 +63,8 @@ static void wc(int args, char *arguments[]);
 static void filter(int args, char *arguments[]);
 static void pipe(int args, char *arguments[]);
 static void phylo(int args, char *arguments[]);
+static void testMM(int args, char *arguments[]);
+static void testSync(int args, char *arguments[]);
 
 static t_command functions[] = {
     {&inforeg,"inforeg"},
@@ -84,7 +87,9 @@ static t_command functions[] = {
     {&wc, "wc"},
     {&filter, "filter"},
     {&pipe, "pipe"},
-    {&phylo, "phylo"}
+    {&phylo, "phylo"},
+    {&testMM, "testMM"},
+    {&testSync, "testSync"}
 };
 
 void startShell(int argc, char *argv[]){
@@ -404,7 +409,9 @@ static void help(int args, char *arguments[]){
     printf("wc -> .\n");
     printf("filter -> .\n");
     printf("pipe -> .\n");
-    printf("phylo -> .");
+    printf("phylo -> .\n");
+    printf("testMM -> tests memory manager.\n");
+    printf("testSync -> tests semaphore's sync.");
     printu();
 }
 
@@ -615,4 +622,25 @@ static void phylo(int args, char *arguments[]){
     phyloFunc(count);
     // Aca va la funcion que llama a phylo
     printu();
+}
+
+static void testMM(int args, char *arguments[]){
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    test_mm();
+}
+
+
+static void testSync(int args, char *arguments[]){
+    /*
+    if(args!=1){
+        invalidAmount();
+        newln();
+        return;
+    }
+    test_sync();
+    */
 }

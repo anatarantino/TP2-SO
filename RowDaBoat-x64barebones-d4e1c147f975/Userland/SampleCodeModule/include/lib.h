@@ -5,6 +5,7 @@
 
 #define SIZE 100
 #define EOF -1
+#define NULL 0
 
 uint64_t* getRegisters();
 uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);

@@ -1,12 +1,13 @@
-#include <test_util.h>
+#include <tests.h>
+#include "test_util.h"
 #include <memoryLib.h>
 #include <strings.h>
 #include <lib.h>
 #include <prints.h>
-#include <tests.h>
 
 #define MAX_BLOCKS 128
 #define MAX_MEMORY 1024 //Should be around 80% of memory managed by the MM
+#define NULL 0
 
 typedef struct MM_rq{
   void *address;
@@ -18,6 +19,8 @@ void test_mm(){
   uint8_t rq;
   uint32_t total;
 
+  newln();
+  printf("Memory manager test started");
   while (1){
     rq = 0;
     total = 0;
@@ -26,7 +29,9 @@ void test_mm(){
     while(rq < MAX_BLOCKS && total < MAX_MEMORY){
       mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
       mm_rqs[rq].address = memalloc(mm_rqs[rq].size); // TODO: Port this call as required
-//TODO: check if NULL
+      if(mm_rqs[rq].address == NULL){
+        printf("malloc returned null");
+      }
       total += mm_rqs[rq].size;
       rq++;
     }
@@ -35,22 +40,18 @@ void test_mm(){
     uint32_t i;
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != NULL)
-        memset(mm_rqs[i].address, i, mm_rqs[i].size); // TODO: Port this call as required
+        memset(mm_rqs[i].address, i, mm_rqs[i].size); 
 
     // Check
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != NULL)
         if(!memcheck(mm_rqs[i].address, i, mm_rqs[i].size))
-          printf("ERROR!\n"); // TODO: Port this call as required
+          printf("ERROR!\n");
 
     // Free
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address != NULL)
-        memfree(mm_rqs[i].address);  // TODO: Port this call as required
+        memfree(mm_rqs[i].address);  
   } 
-}
-
-int main(){
-  test_mm();
-  return 0;
+  
 }

@@ -1,8 +1,8 @@
-#include <stdint.h>
-#include <stdio.h>
+
+#include <tests.h>
 #include <semLib.h>
 #include <processLib.h> 
-
+/*
 uint64_t my_create_process(char * name){
   return 0;
 }
@@ -53,20 +53,21 @@ void inc(uint64_t sem, int64_t value, uint64_t N){
   
   printf("Final value: %d\n", global);
 }
-
+*/
 void test_sync(){
-  uint64_t i;
+  return;
+  // uint64_t i;
 
-  global = 0;
+  // global = 0;
 
-  printf("CREATING PROCESSES...(WITH SEM)\n");
+  // printf("CREATING PROCESSES...(WITH SEM)\n");
 
-  for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    my_create_process("inc", 1, 1, 1000000);
-    my_create_process("inc", 1, -1, 1000000);
-  }
+  // for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
+  //   my_create_process("inc", 1, 1, 1000000);
+  //   my_create_process("inc", 1, -1, 1000000);
+  // }
 }
-
+/*
 void test_no_sync(){
   uint64_t i;
 
@@ -84,3 +85,5 @@ int main(){
   test_sync();
   return 0;
 }
+
+*/
