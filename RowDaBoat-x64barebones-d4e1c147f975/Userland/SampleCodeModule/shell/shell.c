@@ -15,7 +15,7 @@
 #include <tests.h>
 
 #define TOTAL_SIZE 150
-#define TOTAL_COMMANDS 23
+#define TOTAL_COMMANDS 24
 #define TOTAL_REG 17
 #define TOTAL_ARGUMENTS 5
 #define STLINE 43
@@ -65,31 +65,36 @@ static void pipe(int args, char *arguments[]);
 static void phylo(int args, char *arguments[]);
 static void testMM(int args, char *arguments[]);
 static void testSync(int args, char *arguments[]);
+static void testProcesses(int args, char *arguments[]);
+static void testPriority(int args, char *arguments[]);
 
 static t_command functions[] = {
-    {&inforeg,"inforeg"},
-    {&printmem,"printmem"},
-    {&time,"time"},
-    {&chess,"chess"},
-    {&help,"help"},
-    {&clear,"clear"},
-    {&divisionByZero,"divByZeroException"},
-    {&opCodeException,"opCodeException"},
-    {&ps,"ps"},
-    {&loop,"loop"},
-    {&kill,"kill"},
-    {&nice,"nice"},
-    {&block,"block"},
-    {&unblock,"unblock"},
-    {&mem, "mem"},
-    {&sem, "sem"},
-    {&cat, "cat"},
-    {&wc, "wc"},
-    {&filter, "filter"},
-    {&pipe, "pipe"},
-    {&phylo, "phylo"},
-    {&testMM, "testMM"},
-    {&testSync, "testSync"}
+    {&help,"help",""},
+    {&inforeg,"inforeg","inforeg -> prints registers values, press ctrl + r to update values.\n"},
+    {&printmem,"printmem","printmem -> receives a pointer and makes a memory dump of 32 bytes on screen starting on the direction introduced.\n"},
+    {&time,"time","time -> prints system time on screen.\n"},
+    {&chess,"chess","chess -> this command starts a chess game.\n"},
+    {&clear,"clear","clear -> clearclears the screen.\n"},
+    {&divisionByZero,"divByZeroException","divByZeroException -> tests the division by zero exception.\n"},
+    {&opCodeException,"opCodeException","opCodeException -> tests the exception caused by an invalid operation code.\n"},
+    {&ps,"ps","ps -> prints all the processes with their properties.\n"},
+    {&loop,"loop","loop -> prints the PID in a certain amount of seconds. To terminate the loop please press ctrl+c\n"},
+    {&kill,"kill","kill -> kills a process given it's ID.\n"},
+    {&nice,"nice","nice -> change a process priority with the given ID.\n"},
+    {&block,"block","block -> blocks a process with the given ID.\n"},
+    {&unblock,"unblock","unblock -> unblocks a process with the given ID.\n"},
+    {&mem, "mem","mem -> prints memory's status.\n"},
+    {&sem, "sem","sem -> prints semaphores information.\n"},
+    {&cat, "cat","cat -> prints stdin.\n"},
+    {&wc, "wc","wc -> counts the number of lines in the input.\n"},
+    {&filter, "filter","filter -> filter the vowels of the input.\n"},
+    {&pipe, "pipe","pipe -> prints all the pipes with their properties.\n"},
+    {&phylo, "phylo","phylo -> dining philosophers problem, receives a starting number of phylosophers (maximum: 10, minimum: 2).\n"},
+    {&testMM, "testMM","testMM -> tests memory manager.\n"},
+    //{&testSync, "testSync","testSync -> tests semaphore's sync.\n"},
+    //{&testNoSync, "testNoSync","testNoSync -> tests semaphore's sync.\n"},
+    {&testProcesses, "testProcesses","testProcesses -> tests process creation.\n"},
+    {&testPriority, "testPriority","testPriority -> tests scheduler priority."},
 };
 
 void startShell(int argc, char *argv[]){
@@ -152,30 +157,31 @@ static void processCommand(){
 
     int command_index = getCommand(argv[0]);
     if(command_index == -1){
+        newln();
         printColor("Invalid command",RED,BLACK);
         printu();
         return;
     }
     flag = 1;
-    addProcess(functions[command_index].command,totArgs,argv,fg);
+    addProcess((int (*)(int,char**))functions[command_index].command,totArgs,argv,fg);
 
 
-    
+
     // if(comm != CLEARSC && comm !=CHESS){
     //     printf("entre :O");
     //     newln();
     // }
-    
+
     // for (int i = 0; i < TOTAL_COMMANDS; i++){
     //     result=stringcmp(argv[0],commands[i]);
     //     if(result==1){
     //         addProcess(functions[i].command,totArgs,argv,fg);
-    //         applyCommand(i,argv+1,totArgs);    
+    //         applyCommand(i,argv+1,totArgs);
     //         flag=1;
     //         comm = i;
     //     }
     // }
-    
+
 }
 /*
 static void applyCommand(int command_num,char *arguments[],int totArgs){
@@ -213,10 +219,10 @@ static void applyCommand(int command_num,char *arguments[],int totArgs){
         break;
     case KILLS:
         kill(totArgs,arguments);
-        break;  
+        break;
     case NICES:
         nice(totArgs,arguments);
-        break;      
+        break;
     case BLOCKS:
         block(totArgs,arguments);
         break;
@@ -290,7 +296,7 @@ static void printmem(int args, char *arguments[]){
             printf(buffer);
             putChar(' ');
         }
-        newln(); 
+        newln();
     }
     printf(user);
 }
@@ -337,13 +343,13 @@ static void printTime(time_type desc){
             break;
         case DAYOFWEEK:
             switch(getTime(DAYOFWEEK)){
-                case 1: 
+                case 1:
                     printf("Sunday");
                     break;
                 case 2:
                     printf("Monday");
                     break;
-                case 3: 
+                case 3:
                     printf("Tuesday");
                     break;
                 case 4:
@@ -388,30 +394,9 @@ static void help(int args, char *arguments[]){
         return;
     }
     newln();
-    printf("HELP\n");
-    printf("DESCRIPTION: this is a list of the commands available.\n");
-    printf("inforeg -> prints registers values, press ctrl + r to update values.\n");
-    printf("printmem -> receives a pointer and makes a memory dump of 32 bytes on screen starting on the direction introduced.\n"); //igual al de fran cambiar!!!
-    printf("time -> prints system time on screen.\n"); 
-    printf("clear -> clears the screen.\n");
-    printf("chess -> this command starts a chess game.\n");
-    printf("divByZeroException -> tests the division by zero exception.\n");
-    printf("opCodeException -> tests the exception caused by an invalid operation code.\n");
-    printf("ps -> .\n");
-    printf("loop -> . To terminate the loop please press ctrl+c\n");
-    printf("kill -> .\n");
-    printf("nice -> .\n");
-    printf("block -> .\n");
-    printf("unblock -> .\n");
-    printf("mem -> .\n");
-    printf("sem -> .\n");
-    printf("cat -> .\n");
-    printf("wc -> .\n");
-    printf("filter -> .\n");
-    printf("pipe -> .\n");
-    printf("phylo -> .\n");
-    printf("testMM -> tests memory manager.\n");
-    printf("testSync -> tests semaphore's sync.");
+    for (int i = 0; i < TOTAL_COMMANDS; i++) {
+        printf(functions[i].description);
+    }
     printu();
 }
 
@@ -458,7 +443,7 @@ static void chess(int args, char *arguments[]){
         return;
     }
     clearScreen();
-    
+
     playChess();
     printf(user);
 }
@@ -517,7 +502,7 @@ static void nice(int args, char *arguments[]){
     strToInt(arguments[1], &pid);
     int newPrio;
     strToInt(arguments[2],&newPrio);
-    
+
     niceProcess((uint64_t)pid, (uint64_t)newPrio);
     printu();
 }
@@ -617,7 +602,7 @@ static void phylo(int args, char *arguments[]){
         newln();
         return;
     }
-    newln();  
+    newln();
     int count = atoi(arguments[1]);
     phyloFunc(count);
     // Aca va la funcion que llama a phylo
@@ -642,3 +627,4 @@ static void testSync(int args, char *arguments[]){
     }
     test_sync();
 }
+*/
