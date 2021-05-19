@@ -207,3 +207,33 @@ make all
 make all
 make all
 make all
+cd root/
+ls
+cd RowDaBoat-x64barebones-d4e1c147f975/
+ls
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all

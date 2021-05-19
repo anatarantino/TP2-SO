@@ -15,7 +15,7 @@
 #include <tests.h>
 
 #define TOTAL_SIZE 150
-#define TOTAL_COMMANDS 24
+#define TOTAL_COMMANDS 26
 #define TOTAL_REG 17
 #define TOTAL_ARGUMENTS 5
 #define STLINE 43

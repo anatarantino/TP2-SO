@@ -24,7 +24,7 @@ typedef struct {
 typedef struct sem_t{
     char name[MAX_LEN];
     uint64_t value;
-    uint64_t lock;
+    uint8_t lock;
     uint64_t pcount;
     uint8_t isOn;
     semList_t * pBlocked;
@@ -32,21 +32,15 @@ typedef struct sem_t{
 
 static int sem_create(char * name, uint64_t value);
 static void pPrint(process_t * process);
-static void exchanging(uint64_t * semval, uint64_t val);
+static void exchanging(uint8_t * semval, uint8_t val);
 static void process_enqueue(semList_t * pBlocked, uint64_t pid);
 static uint64_t process_dequeue(semList_t * pBlocked);
 static int getFreeSem();
+static int sem_index(char * name);
+static void freeList(semList_t * pblocked);
 
 static sem_t sems[SEM_MAX];
-static int dim;
-static uint64_t newSem;
-static uint64_t endSem;
-
-int sem_init(){
-    newSem = 0;
-    endSem = 0;
-    return 0;
-}
+static uint8_t newSem;
 
 static int sem_create(char * name, uint64_t value){
     int index = getFreeSem();
@@ -74,51 +68,55 @@ int sem_open(char * name, uint64_t value){
     if(name == NULL){
         return ERROR;
     }
-    int i;
+    int index;
+
     exchanging(&newSem, LOCK);
-    sem_t * sem;
-    for(i=0; i<dim; i++){
-        sem = &sems[i];
-        if(strcmp(sem->name, name) == 0){
-            sem->pcount++;
-            exchange(&newSem, UNLOCK);
-            return i;
-        }
+
+    index = sem_index(name);
+
+    if(index == -1){ //el semeaforo no existe y lo debo crear
+        index = sem_create(name, value); 
+        if(index == -1){ //si no puedo crear otro semaforo retorno error
+            exchange(&newSem,UNLOCK);
+            return ERROR;
+        }   
     }
 
-    i = sem_create(name, value); //si no existe el semaforo que estoy buscando lo creo
-
-    if(i == -1){ //si no puedo crear otro semaforo retorno error
-        exchange(&newSem,UNLOCK);
-        return ERROR;
-    }
-    printNewLine();
-    sems[i].pcount++;
-    exchange(&newSem, UNLOCK);
-    return i;
+    sems[index].pcount++;
+    exchange(&newSem,UNLOCK);
+    return index;
 }
 
 int sem_wait(int index){
-    if(index > dim || index < 0){
-        return ERROR;
-    }
     sem_t * sem = &sems[index];
-    exchanging(&sem->lock, LOCK);
-    sem->value--;
-    if(sem->value < 0){
-        uint64_t pid = getPid();
-        process_enqueue(sem->pBlocked,pid);
-        exchange(&sem->lock, UNLOCK);
-        block(pid);
-    } else{
-        exchange(&sem->lock, UNLOCK);
+
+    if(!sem->isOn){
+        return -1;
     }
 
-    return 0;
+    exchanging(&sem->lock, LOCK);
+
+    if(sem->value > 0){
+        sem->value--;
+        exchange(&sem->lock, UNLOCK);
+        return 1;
+    }
+    uint64_t pid = currentProcessPid();
+    process_t * p = memalloc(sizeof(process_t));
+    if(p == NULL){
+        exchange(&sem->lock,UNLOCK);
+        return -1;
+    }
+    p->pid = pid;
+    process_enqueue(sem->pBlocked, pid);
+    exchange(&sem->lock,UNLOCK);
+    block(pid);
+
+    return 1;
 }
 
 int sem_post(int index){
-    if(index > dim || index < 0){
+    if(index > SEM_MAX || index < 0){
         return ERROR;
     }
     sem_t * sem = &sems[index];
@@ -137,34 +135,40 @@ int sem_post(int index){
 
     uint64_t pid;
     pid = process_dequeue(sem->pBlocked);
+    exchange(&sem->lock, UNLOCK);
+
     unblock(pid);
     
-    exchange(&sem->lock, UNLOCK); //fijarse si no hay que cambiar el orden de esta linea con la 136 tengo que desbloquear la region para desbloquear el proceso??
     return 1;
 }
 
 int sem_close(int index){
-    if(index > dim || index < 0){
-        return ERROR;
-    }
     sem_t * sem = &sems[index];
-    exchanging(&endSem, LOCK);
-    sem->pcount--;
-    if(sem->pcount == 0){
-        memfree(sem);
-        for(int i=index; i<dim-1; i++){
-            sems[i]=sems[i+1];
-        }
-        dim--;
+    if(!sem->isOn){
+        return -1;
     }
-    exchange(&endSem, UNLOCK);
-    return 0;
+
+    exchanging(&sem->lock, LOCK);
+
+    sem->pcount--;
+
+    if(sem->pcount > 0){
+        exchange(&sem->lock,UNLOCK);
+        return 1;
+    }
+    if(sem->pBlocked->size > 0){
+        printf("Error in sem_close, processes still blocked");
+        printNewLine();
+        exchange(&sem->lock,UNLOCK);
+        return -1;
+    }
+    sem->isOn = 0;
+    freeList(sem->pBlocked);
+    exchange(&sem->lock, UNLOCK);
+    return 1;
 }
 
 void sem_changeValue(int index, uint64_t value){
-    if(index > dim || index < 0){
-        return;
-    }
     sem_t * sem = &sems[index];
     exchanging(&sem->lock, LOCK);
     sem->value = value;
@@ -173,7 +177,7 @@ void sem_changeValue(int index, uint64_t value){
 
 void sems_print(){
     printf("\nNAME   VALUE    BLOCKED PROCESSES PID'S\n");
-    for(int i=0; i<dim; i++){
+    for(int i=0; i<SEM_MAX; i++){
         sem_print(i);
     }
 }
@@ -198,11 +202,8 @@ static void pPrint(process_t * process){
     }
 }
 
-static void exchanging(uint64_t * semval, uint64_t val){
-    uint64_t ex = exchange(semval,val);
-    while(ex != 0){
-        ex = exchange(semval,val);
-    }
+static void exchanging(uint8_t * semval, uint8_t val){
+    while(exchange(semval,val) != 0);
 }
 
 static void process_enqueue(semList_t * pBlocked, uint64_t pid){
@@ -243,4 +244,28 @@ static int getFreeSem(){
         }
     }
     return -1;
+}
+
+static int sem_index(char * name){
+    for(int i = 0; i < SEM_MAX ; i++){
+        if(sems[i].isOn){
+            if(strcmp(sems[i].name,name) == 0){
+                return i;
+            }
+        }
+    }
+    return -1;
+}
+
+static void freeList(semList_t * pblocked){
+    process_t * p = pblocked->first;
+    process_t * aux;
+    int i = 0;
+    while(p != NULL && i < pblocked->size){
+        aux = p;
+        p = p->next;
+        memfree(aux);
+        i++;
+    }
+    memfree(pblocked);
 }

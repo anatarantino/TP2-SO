@@ -44,5 +44,6 @@ void killLoop();
 void exit();            // resigns CPU in /IDT/exceptions.c
 void yield();
 void wait(uint64_t pid);
+uint64_t currentProcessPid();
 
 #endif

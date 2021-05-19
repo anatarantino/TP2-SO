@@ -390,3 +390,10 @@ void wait(uint64_t pid){
             block(currentProcess->control_block.pid);
       }
 }
+
+uint64_t currentProcessPid(){
+    if(currentProcess){
+        return currentProcess->control_block.pid;
+    }
+    return 0;
+}

@@ -1,7 +1,3 @@
-make -s
-make clear
-make clean
-make -s
 make clean
 make -s
 make clean
@@ -496,5 +492,9 @@ make all
 make all
 make all
 make all
+make all
+make all
+cd root/
+ls
 make all
 make all

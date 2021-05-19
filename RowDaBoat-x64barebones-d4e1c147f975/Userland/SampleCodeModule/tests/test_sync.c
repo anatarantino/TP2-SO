@@ -3,6 +3,7 @@
 #include <processLib.h> 
 #include <strings.h>
 #include <prints.h>
+#include <timeRTC.h>
 
 
 #define TOTAL_PAIR_PROCESSES 2
@@ -25,8 +26,6 @@ static int inc(int args, char **argv){
   int semIndex;
   uint64_t i;
 
-  printf("val: ");
-  printInt(value);
   if (sem){
     if((semIndex = sem_open(SEM_ID, 1)) == -1){
       printf("ERROR OPENING SEM");
@@ -34,7 +33,7 @@ static int inc(int args, char **argv){
       return -1;
     }
   }
-  
+
   for (i = 0; i < N; i++){
     if (sem){
       sem_wait(semIndex);
@@ -70,8 +69,8 @@ void test_sync(){
   printf("CREATING PROCESSES...(WITH SEM)");
   newln();
 
-  char * argv1[]={"inc","1","1","100000"};
-  char * argv2[]={"inc","1","-1","100000"};
+  char * argv1[]={"inc","1","1","5"};
+  char * argv2[]={"inc","1","-1","5"};
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
     addProcess(&inc,4,argv1,0);
