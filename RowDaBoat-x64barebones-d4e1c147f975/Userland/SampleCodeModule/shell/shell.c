@@ -37,7 +37,6 @@ static int index=0,flag=1;
 static void printMessage();
 static void analizeChar(char c);
 static void processCommand();
-//static void applyCommand(int command_num,char*arguments[],int totArgs);
 static void removeChar();
 static void inforeg(int args, char *arguments[]);
 static void printmem(int args, char *arguments[]);
@@ -147,8 +146,6 @@ static void processCommand(){
 
     int totArgs = strtok(buff,' ', argv, TOTAL_ARGUMENTS);
 
-    //int flag=0;
-    //int comm = -1;
     uint8_t fg = 1;
 
     if(argv[totArgs - 1][0] == '&') {
@@ -165,94 +162,7 @@ static void processCommand(){
     }
     flag = 1;
     addProcess((int (*)(int,char**))functions[command_index].command,totArgs,argv,fg, 0);
-
-
-
-    // if(comm != CLEARSC && comm !=CHESS){
-    //     printf("entre :O");
-    //     newln();
-    // }
-
-    // for (int i = 0; i < TOTAL_COMMANDS; i++){
-    //     result=stringcmp(argv[0],commands[i]);
-    //     if(result==1){
-    //         addProcess(functions[i].command,totArgs,argv,fg);
-    //         applyCommand(i,argv+1,totArgs);
-    //         flag=1;
-    //         comm = i;
-    //     }
-    // }
-
 }
-/*
-static void applyCommand(int command_num,char *arguments[],int totArgs){
-    switch (command_num)
-    {
-    case INFOREG:
-        inforeg(totArgs,arguments);
-        break;
-    case PRINTMEM:
-        printmem(totArgs,arguments);
-        break;
-    case TIME:
-        time(totArgs,arguments);
-        break;
-    case HELP:
-        help(totArgs,arguments);
-        break;
-    case CLEARSC:
-        clear(totArgs,arguments);
-        break;
-    case DIVZERO:
-        divisionByZero(totArgs,arguments);
-        break;
-    case OPCODE:
-        opCodeException(totArgs,arguments);
-        break;
-    case CHESS:
-        chess(totArgs,arguments);
-        break;
-    case PSS:
-        ps(totArgs,arguments);
-        break;
-    case LOOPS:
-        loop(totArgs,arguments);
-        break;
-    case KILLS:
-        kill(totArgs,arguments);
-        break;
-    case NICES:
-        nice(totArgs,arguments);
-        break;
-    case BLOCKS:
-        block(totArgs,arguments);
-        break;
-    case UNBLOCKS:
-        unblock(totArgs,arguments);
-        break;
-    case MEMS:
-        mem(totArgs,arguments);
-        break;
-    case SEMS:
-        sem(totArgs,arguments);
-        break;
-    case CATS:
-        cat(totArgs,arguments);
-        break;
-    case WCS:
-        wc(totArgs,arguments);
-        break;
-    case FILTERS:
-        filter(totArgs,arguments);
-        break;
-    case PIPES:
-        pipe(totArgs,arguments);
-        break;
-    case PHYLOS:
-        phylo(totArgs,arguments);
-        break;
-    }
-}*/
 
 static void removeChar(){
     if(index>0){
@@ -414,7 +324,7 @@ static void clear(int args, char *arguments[]){
 static void printMessage(){
     printColor("Welcome to the shell!\n",GREEN,BLACK);
     printColor("Please enter one of the following commands:\n",GREEN,BLACK);
-    printColor("- inforeg - printmem - time - chess - clear - divByZeroException - opCodeException - ps - loop - kill - nice - block - unblock - mem - sem - cat - wc - filter - pipe - phylo\n",GREEN,BLACK);
+    printColor("- inforeg - printmem - time - chess - clear - divByZeroException - opCodeException - ps - loop - kill - nice - block - unblock - mem - sem - cat - wc - filter - pipe - phylo - testMM - testSync - testNoSync - testProcesses - testPriority -\n",GREEN,BLACK);
     printColor("Or press 'help' to see more information on the commands of this shell.\n",GREEN,BLACK);
 }
 
@@ -466,7 +376,6 @@ void invalidAmount(){
 static void ps(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
     printProcess();
@@ -476,7 +385,6 @@ static void ps(int args, char *arguments[]){
 static void loop(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
     loopProcess();
@@ -496,14 +404,12 @@ static void kill(int args, char *arguments[]){
 static void nice(int args, char *arguments[]){
     if(args!=3){
         invalidAmount();
-        newln();
         return;
     }
     int pid;
     strToInt(arguments[1], &pid);
     int newPrio;
     strToInt(arguments[2],&newPrio);
-
     niceProcess((uint64_t)pid, (uint64_t)newPrio);
     printu();
 }
@@ -511,7 +417,6 @@ static void nice(int args, char *arguments[]){
 static void block(int args, char *arguments[]){
     if(args!=2){
         invalidAmount();
-        newln();
         return;
     }
     int pid;
@@ -523,7 +428,6 @@ static void block(int args, char *arguments[]){
 static void unblock(int args, char *arguments[]){
     if(args!=2){
         invalidAmount();
-        newln();
         return;
     }
     int pid;
@@ -543,6 +447,7 @@ static void mem(int args, char *arguments[]){
         newln();
         return;
     }
+    newln();
     memdata();
     printu();
 }
@@ -550,7 +455,6 @@ static void mem(int args, char *arguments[]){
 static void sem(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
     sem_print();
@@ -558,31 +462,31 @@ static void sem(int args, char *arguments[]){
 }
 
 static void cat(int args, char *arguments[]){
-    if(args!=2){
+    if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
+    newln();
     catFunc();
     printu();
 }
 
 static void wc(int args, char *arguments[]){
-    if(args!=2){
+    if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
+    newln();
     wcFunc();
     printu();
 }
 
 static void filter(int args, char *arguments[]){
-    if(args!=2){
+    if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
+    newln();
     filterFunc();
     printu();
 }
@@ -590,9 +494,9 @@ static void filter(int args, char *arguments[]){
 static void pipe(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
+    newln();
     plist();
     printu();
 }
@@ -600,7 +504,6 @@ static void pipe(int args, char *arguments[]){
 static void phylo(int args, char *arguments[]){
     if(args!=2){           
         invalidAmount();
-        newln();
         return;
     }
     newln();
@@ -612,26 +515,25 @@ static void phylo(int args, char *arguments[]){
 static void testMM(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
     test_mm();
+    printu();
 }
 
 
 static void testSync(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
     test_sync();
+    printu();
 }
 
 static void testNoSync(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
     test_no_sync();
@@ -640,16 +542,16 @@ static void testNoSync(int args, char *arguments[]){
 static void testProcesses(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
     test_processes();
+    printu();
 }
 static void testPriority(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
     test_prio();
+    printu();
 }

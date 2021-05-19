@@ -79,6 +79,9 @@ void keyboard_handler(uint64_t rsp){ // 0 0 0 0 80
                         else if(control == 1 && pressedKeys[key][0] == 'c'){
                             killLoop();
                             control=0;
+                        }else if(control == 1 && pressedKeys[key][0] == 'd'){
+                            buffer[index++]=-1;
+                            control=0;
                         }else{
                             if(shift == 1){
                                 if(caps == 1){

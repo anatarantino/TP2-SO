@@ -62,9 +62,7 @@ static int inc(int args, char **argv){
 }
 
 void test_sync(){
-
   uint64_t i;
-
   global = 0;
 
   newln();
@@ -78,12 +76,10 @@ void test_sync(){
     addProcess(&inc,4,argv1,0,0);
     addProcess(&inc,4,argv2,0,0);
   }
-  
 }
 
 void test_no_sync(){
   uint64_t i;
-
   global = 0;
 
   newln();

@@ -36,16 +36,15 @@ void catFunc(){
 
 void wcFunc(){
     int c;
-    int lines = 0;
+    int lines = 1;
     while((c=getChar()) != -1){
         putChar(c);
         if(c == '\n'){
             lines++;
         }
     }
-    printf("\n The input had ");
+    printf("\nTotal lines: ");
     printInt(lines);
-    printf(" lines.");
 }
 
 void filterFunc(){
