@@ -42,7 +42,7 @@ void printInt(uint64_t num){
     printf(buff);
 }
 
-void printInt2(int num){
+void printIntNeg(int num){
     char buffer[10];
     itoa(num, buffer, 10);
     printf(buffer);
