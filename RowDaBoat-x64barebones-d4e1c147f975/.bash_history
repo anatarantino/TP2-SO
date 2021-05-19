@@ -2,25 +2,6 @@ make -s
 make clean
 make -s
 make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
-make -s
-make -s
-make clean
-make -s
-make clean
-make -s
-make clean
 make clean
 make -s
 make clean
@@ -498,3 +479,22 @@ cd root/
 ls
 make all
 make all
+ls
+cd root/
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make all
+make clean
+make all
+exit

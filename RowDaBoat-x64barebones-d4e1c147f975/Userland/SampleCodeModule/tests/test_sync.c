@@ -39,6 +39,7 @@ static int inc(int args, char **argv){
       sem_wait(semIndex);
     } 
     slowInc(&global, value);
+    sleep(30);
     if (sem){
       sem_post(semIndex);
     } 
@@ -89,8 +90,8 @@ void test_no_sync(){
   printf("CREATING PROCESSES...(WITHOUT SEM)");
   newln();
 
-  char * argv1[]={"inc","1","1","100000"};
-  char * argv2[]={"inc","1","-1","100000"};
+  char * argv1[]={"inc","0","1","5"};
+  char * argv2[]={"inc","0","-1","5"};
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
     addProcess(&inc,4,argv1,0,0);
