@@ -33,7 +33,7 @@ typedef struct stackFrame{
 
 void initializeSch();
 uint64_t scheduler();
-uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg);
+uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg, uint16_t * fd);
 uint64_t kill(uint64_t pid);
 uint64_t unblock(uint64_t pid);
 uint64_t block(uint64_t pid);
@@ -44,6 +44,7 @@ void killLoop();
 void exit();            // resigns CPU in /IDT/exceptions.c
 void yield();
 void wait(uint64_t pid);
-uint64_t currentProcessPid();
+uint64_t getInput();
+uint64_t getOutput();
 
 #endif

@@ -25,7 +25,7 @@ static void endless_loop(){
 
 static uint64_t my_create_process(char * name){
  	char *arguments[]={name};
- 	return addProcess((int(*)(int,char**))endless_loop,1,arguments,0);
+ 	return addProcess((int(*)(int,char**))endless_loop,1,arguments,0,0);
 }
 
 static uint64_t my_nice(uint64_t pid, uint64_t newPrio){

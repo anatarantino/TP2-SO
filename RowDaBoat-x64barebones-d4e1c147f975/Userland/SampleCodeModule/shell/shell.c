@@ -164,7 +164,7 @@ static void processCommand(){
         return;
     }
     flag = 1;
-    addProcess((int (*)(int,char**))functions[command_index].command,totArgs,argv,fg);
+    addProcess((int (*)(int,char**))functions[command_index].command,totArgs,argv,fg, 0);
 
 
 
@@ -598,7 +598,7 @@ static void pipe(int args, char *arguments[]){
 }
 
 static void phylo(int args, char *arguments[]){
-    if(args!=2){            // recibe un numero?
+    if(args!=2){           
         invalidAmount();
         newln();
         return;
@@ -606,7 +606,6 @@ static void phylo(int args, char *arguments[]){
     newln();
     int count = atoi(arguments[1]);
     phyloFunc(count);
-    // Aca va la funcion que llama a phylo
     printu();
 }
 

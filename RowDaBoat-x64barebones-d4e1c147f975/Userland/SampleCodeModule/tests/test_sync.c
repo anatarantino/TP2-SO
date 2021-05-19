@@ -73,8 +73,8 @@ void test_sync(){
   char * argv2[]={"inc","1","-1","5"};
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    addProcess(&inc,4,argv1,0);
-    addProcess(&inc,4,argv2,0);
+    addProcess(&inc,4,argv1,0,0);
+    addProcess(&inc,4,argv2,0,0);
   }
   
 }
@@ -92,8 +92,8 @@ void test_no_sync(){
   char * argv2[]={"inc","1","-1","100000"};
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    addProcess(&inc, 4, argv1, 0);
-    addProcess(&inc, 4, argv2, 0);
+    addProcess(&inc, 4, argv1, 0, 0);
+    addProcess(&inc, 4, argv2, 0, 0);
   }
 }
 

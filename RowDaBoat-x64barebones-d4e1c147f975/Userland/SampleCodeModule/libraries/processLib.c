@@ -4,8 +4,8 @@
 #include <prints.h>
 #include <timeRTC.h>
 
-uint64_t addProcess(int (*fn)(int, char **), int argc, char ** argv, uint8_t fg){
-    return syscalls(ADD_PROCESS,(uint64_t)fn,argc,(uint64_t)argv,fg,0,0);
+uint64_t addProcess(int (*fn)(int, char **), int argc, char ** argv, uint8_t fg,uint16_t * fd){
+    return syscalls(ADD_PROCESS,(uint64_t)fn,argc,(uint64_t)argv,fg,(uint64_t)fd,0);
 }
 
 void printProcess(){
