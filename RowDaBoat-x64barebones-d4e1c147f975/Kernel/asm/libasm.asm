@@ -3,7 +3,6 @@ GLOBAL getRTC
 GLOBAL getRSP
 GLOBAL callTimerTick
 GLOBAL start
-GLOBAL exchange
 GLOBAL enter_region
 GLOBAL leave_region
 
@@ -93,11 +92,6 @@ getRSP:
 
 callTimerTick:
 	int 20h
-	ret
-
-exchange:
-	mov rax,rsi
-	xchg [rdi],eax
 	ret
 
 enter_region:

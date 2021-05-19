@@ -646,7 +646,7 @@ static void testProcesses(int args, char *arguments[]){
     test_processes();
 }
 static void testPriority(int args, char *arguments[]){
-if(args!=1){
+    if(args!=1){
         invalidAmount();
         newln();
         return;

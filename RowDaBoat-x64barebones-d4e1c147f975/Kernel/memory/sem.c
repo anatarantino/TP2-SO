@@ -32,7 +32,6 @@ typedef struct sem_t{
 
 static int sem_create(char * name, uint64_t value);
 static void pPrint(process_t * process);
-static void exchanging(uint8_t * semval, uint8_t val);
 static void process_enqueue(semList_t * pBlocked, process_t * process);
 static uint64_t process_dequeue(semList_t * pBlocked);
 static int getFreeSem();
@@ -204,12 +203,7 @@ static void pPrint(process_t * process){
     }
 }
 
-// static void exchanging(uint8_t * semval, uint8_t val){
-//     while(exchange(semval,val) != 0);
-// }
-
 static void process_enqueue(semList_t * pBlocked, process_t * process){
-
     if(pBlocked->size == 0){
         pBlocked->first = process;
         pBlocked->last = pBlocked->first;
