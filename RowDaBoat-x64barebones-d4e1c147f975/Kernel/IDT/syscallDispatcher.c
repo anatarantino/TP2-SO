@@ -73,11 +73,11 @@ uint64_t syscallDispatcher(t_registers * r){
             case SEM_OPEN:
                 return sem_open((char *)r->rdi, (uint64_t)r->rsi);
             case SEM_WAIT:
-                return sem_wait((uint64_t)r->rdi);
+                return sem_wait((int)r->rdi);
             case SEM_POST:
-                return sem_post((uint64_t)r->rdi);
+                return sem_post((int)r->rdi);
             case SEM_CLOSE:
-                return sem_close((uint64_t)r->rdi);
+                return sem_close((int)r->rdi);
             case SEM_CHANGE_VALUE:
                 sem_changeValue((uint64_t)r->rdi, (uint64_t)r->rsi);
                 break;
