@@ -45,7 +45,7 @@ static process_node* dequeue();
 static void remove(process_node* process);
 static int isEmpty();
 static process_node* getProcess(uint64_t pid);
-static uint64_t initializeProcess(pcb * process, char* argv, uint8_t fg, uint16_t * fd);
+static int initializeProcess(pcb * process, char* argv, uint8_t fg, uint16_t * fd);
 static void initializeStackFrame(uint64_t rbp,int (*process)(int, char **),int argc, char** argv);
 static uint64_t newPid();
 static void printProcess(pcb block);
@@ -77,21 +77,24 @@ uint64_t scheduler(uint64_t rsp){
             enqueue(currentProcess);
         }else{
             process_node* parent=getProcess(currentProcess->control_block.ppid);
-            if(parent!=NULL && parent->control_block.state==BLOCKED){
+            if(parent!=NULL && parent->control_block.state==BLOCKED && currentProcess->control_block.foreground){
                 unblock(parent->control_block.pid);
             }
             remove(currentProcess);
         }
     }
-    currentProcess=dequeue();
-    while(currentProcess->control_block.state != READY){
-        if(currentProcess->control_block.state == BLOCKED){
-            enqueue(currentProcess);
-        }else if(currentProcess->control_block.state == KILLED){
-            remove(currentProcess);
-        }
+    if(processes->pready > 0){
         currentProcess=dequeue();
+        while(currentProcess->control_block.state != READY){
+            if(currentProcess->control_block.state == BLOCKED){
+                enqueue(currentProcess);
+            }else if(currentProcess->control_block.state == KILLED){
+                remove(currentProcess);
+            }
+            currentProcess=dequeue();
+        }
     }
+    
     ticksLeft=currentProcess->control_block.prio;
     return currentProcess->control_block.rsp;
 }
@@ -106,7 +109,7 @@ uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg
     if(newProcess == NULL){
         return 0;
     }
-    if(initializeProcess(&newProcess->control_block,argv[0],fg,fd) == ERROR){
+    if(initializeProcess(&newProcess->control_block,argv[0],fg,fd) == 1){
         return 0;
     }
 
@@ -115,7 +118,7 @@ uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg
 
     for(int i=0; i<argc; i++){
         size = strlen(argv[i]);
-        copy[i] = memalloc(sizeof(char)*size);
+        copy[i] = memalloc(sizeof(char) * (size +1));
         strcopy(copy[i],argv[i]);
     }
 
@@ -130,20 +133,20 @@ uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg
     return newProcess->control_block.pid;
 }
 
-static uint64_t initializeProcess(pcb * process, char* argv, uint8_t fg, uint16_t * fd){
+static int initializeProcess(pcb * process, char* argv, uint8_t fg, uint16_t * fd){
     strcopy(process->name,argv);
     process->pid = newPid();
-    int flag;
-    if((flag = (currentProcess == NULL))){
+
+    if(currentProcess == NULL){
         process->ppid = 0;
     }else{
         process->ppid = currentProcess->control_block.pid;
     }
 
     if(fg > 1){
-        return ERROR;
+        return 1;
     }
-    if(flag){
+    if(currentProcess == NULL){
         process->foreground = fg;
     }else{
         if(currentProcess->control_block.foreground){
@@ -154,9 +157,9 @@ static uint64_t initializeProcess(pcb * process, char* argv, uint8_t fg, uint16_
         }
     }
 
-    process->rbp = (uint64_t)memalloc(SIZE_OF_STACK);
+    process->rbp = (uint64_t) memalloc(SIZE_OF_STACK);
     if(process->rbp == NULL){
-        return ERROR;
+        return 1;
     }
     if(process->foreground){
         process->prio = FGPRIO;
@@ -260,7 +263,7 @@ void nice(uint64_t pid, uint64_t newPrio){
 }
 
 uint64_t getPid(){
-    if(currentProcess != 0){
+    if(currentProcess != NULL){
         return currentProcess->control_block.pid;
     }
 
@@ -322,7 +325,11 @@ uint64_t unblock(uint64_t pid){
 }
 
 uint64_t block(uint64_t pid){
-    return changeState(pid,BLOCKED);
+    int aux = changeState(pid,BLOCKED);
+    if(pid == currentProcess->control_block.pid){
+        callTimerTick();
+    }
+    return aux;
 }
 
 static void enqueue(process_node* process){
@@ -366,7 +373,7 @@ static int isEmpty(){
     return processes->size==0;
 }
 
-void killLoop(){
+void killLoop(){ //chequear
     if (currentProcess != NULL && currentProcess->control_block.state == READY){
         kill(currentProcess->control_block.pid);
         return;

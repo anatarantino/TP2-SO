@@ -35,11 +35,11 @@ static int inc(int args, char **argv){
   }
 
   for (i = 0; i < N; i++){
+  
     if (sem){
       sem_wait(semIndex);
     } 
     slowInc(&global, value);
-    sleep(30);
     if (sem){
       sem_post(semIndex);
     } 
@@ -71,8 +71,8 @@ void test_sync(){
   printf("CREATING PROCESSES...(WITH SEM)");
   newln();
 
-  char * argv1[]={"inc","1","1","5"};
-  char * argv2[]={"inc","1","-1","5"};
+  char * argv1[]={"inc","1","1","100"};
+  char * argv2[]={"inc","1","-1","100"};
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
     addProcess(&inc,4,argv1,0,0);
@@ -90,8 +90,8 @@ void test_no_sync(){
   printf("CREATING PROCESSES...(WITHOUT SEM)");
   newln();
 
-  char * argv1[]={"inc","0","1","5"};
-  char * argv2[]={"inc","0","-1","5"};
+  char * argv1[]={"inc","0","1","100"};
+  char * argv2[]={"inc","0","-1","100"};
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
     addProcess(&inc,4,argv1,0,0);
