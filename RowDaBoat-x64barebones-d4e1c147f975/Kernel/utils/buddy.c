@@ -114,7 +114,7 @@ void memfree(void * ptr){
 }
 
 void memData(){
-        list_t *ptr,*aux;
+    list_t *ptr,*aux;
     uint32_t index=0;
     uint32_t av_space=0;
 

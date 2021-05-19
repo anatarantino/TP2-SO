@@ -141,11 +141,8 @@ static int getCommand(char * name){
 }
 
 static void processCommand(){
-
     char * argv[TOTAL_ARGUMENTS] = {0};
-
     int totArgs = strtok(buff,' ', argv, TOTAL_ARGUMENTS);
-
     uint8_t fg = 1;
 
     if(argv[totArgs - 1][0] == '&') {
@@ -354,7 +351,6 @@ static void chess(int args, char *arguments[]){
         return;
     }
     clearScreen();
-
     playChess();
     printf(user);
 }

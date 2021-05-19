@@ -2,7 +2,7 @@
 
 #include <memory.h>
 #include <prints.h>
-
+#include <colors.h>
 #define TOTAL_MEM 128*1024*1024
 #define HEADER_SIZE sizeof(Header)
 
@@ -98,17 +98,16 @@ void memdata(){
     uint64_t index = 0;
     Header * curr = free_p;
 
-    printf("Memory information:\n\n");
+    printColor("Memory information:\n",VIOLET,BLACK);
     while(curr != NULL){
-        printf("Block number: ");
+        printColor("Block number: ",YELLOW,BLACK);
         printInt(index);
         printNewLine();
-        printf("Current address: ");
-        printHex(curr);
+        printColor("Current address: ",YELLOW,BLACK);
+        printHex((uint64_t)curr);
         printNewLine();
-        printf("Free blocks: ");
+        printColor("Free blocks: ",YELLOW,BLACK);
         printInt(curr->s.size);
-        printNewLine();
         curr = curr->s.next;
         index++;
     }
