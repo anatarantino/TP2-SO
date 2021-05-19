@@ -40,9 +40,13 @@ static int sem_index(char * name);
 static void freeList(semList_t * pblocked);
 
 static sem_t sems[SEM_MAX];
-static uint8_t newSem;
+static uint8_t globalLock;
 
 static int sem_create(char * name, uint64_t value){
+    if(name == NULL){
+        return ERROR;
+    }
+
     int index = getFreeSem();
     if(index == ERROR){ //no tengo lugar para un nuevo semaforo
         return ERROR;
@@ -70,20 +74,20 @@ int sem_open(char * name, uint64_t value){
     }
     int index;
 
-    exchanging(&newSem, LOCK);
+    enter_region(&globalLock);
 
     index = sem_index(name);
 
     if(index == -1){ //el semeaforo no existe y lo debo crear
         index = sem_create(name, value); 
         if(index == -1){ //si no puedo crear otro semaforo retorno error
-            exchange(&newSem,UNLOCK);
+            leave_region(&globalLock);
             return ERROR;
         }   
     }
 
     sems[index].pcount++;
-    exchange(&newSem,UNLOCK);
+    leave_region(&globalLock);
     return index;
 }
 
@@ -94,22 +98,22 @@ int sem_wait(int index){
         return -1;
     }
 
-    exchanging(&sem->lock, LOCK);
+    enter_region(&sem->lock);
 
     if(sem->value > 0){
         sem->value--;
-        exchange(&sem->lock, UNLOCK);
+        leave_region(&sem->lock);
         return 1;
     }
     uint64_t pid = currentProcessPid();
     process_t * p = memalloc(sizeof(process_t));
     if(p == NULL){
-        exchange(&sem->lock,UNLOCK);
+        leave_region(&sem->lock);
         return -1;
     }
     p->pid = pid;
     process_enqueue(sem->pBlocked, pid);
-    exchange(&sem->lock,UNLOCK);
+    leave_region(&sem->lock);
     block(pid);
 
     return 1;
@@ -124,18 +128,16 @@ int sem_post(int index){
     if(!sem->isOn){ //si el semaforo no está en uso es como si no existiese
         return -1;
     }
-    exchanging(&sem->lock, LOCK);
-
+    enter_region(&sem->lock);
     if(sem->value > 0 || (sem->pBlocked->size == 0) ) {
         sem->value++;
-        exchange(&sem->lock, UNLOCK);
+        leave_region(&sem->lock);
         return 1;
     }
     
-
     uint64_t pid;
     pid = process_dequeue(sem->pBlocked);
-    exchange(&sem->lock, UNLOCK);
+    leave_region(&sem->lock);
 
     unblock(pid);
     
@@ -148,31 +150,31 @@ int sem_close(int index){
         return -1;
     }
 
-    exchanging(&sem->lock, LOCK);
+    enter_region(&sem->lock);
 
     sem->pcount--;
 
     if(sem->pcount > 0){
-        exchange(&sem->lock,UNLOCK);
+        leave_region(&sem->lock);
         return 1;
     }
     if(sem->pBlocked->size > 0){
         printf("Error in sem_close, processes still blocked");
         printNewLine();
-        exchange(&sem->lock,UNLOCK);
+        leave_region(&sem->lock);
         return -1;
     }
     sem->isOn = 0;
     freeList(sem->pBlocked);
-    exchange(&sem->lock, UNLOCK);
+    leave_region(&sem->lock);
     return 1;
 }
 
 void sem_changeValue(int index, uint64_t value){
     sem_t * sem = &sems[index];
-    exchanging(&sem->lock, LOCK);
+    enter_region(&sem->lock);
     sem->value = value;
-    exchange(&sem->lock, UNLOCK);
+    leave_region(&sem->lock);
 }
 
 void sems_print(){
@@ -184,14 +186,14 @@ void sems_print(){
 
 void sem_print(int index){
     sem_t * sem = &sems[index];
-    exchanging(&sem->lock, LOCK);
+    enter_region(&sem->lock);
     printf(sem->name);
     printf("\t\t\t");
     printInt(sem->value);
     printf("\t\t\t");
     pPrint(sem->pBlocked->first);
     printNewLine();
-    exchange(&sem->lock,UNLOCK);
+    leave_region(&sem->lock);
 }
 
 static void pPrint(process_t * process){
@@ -202,9 +204,9 @@ static void pPrint(process_t * process){
     }
 }
 
-static void exchanging(uint8_t * semval, uint8_t val){
-    while(exchange(semval,val) != 0);
-}
+// static void exchanging(uint8_t * semval, uint8_t val){
+//     while(exchange(semval,val) != 0);
+// }
 
 static void process_enqueue(semList_t * pBlocked, uint64_t pid){
     if(pBlocked == NULL){

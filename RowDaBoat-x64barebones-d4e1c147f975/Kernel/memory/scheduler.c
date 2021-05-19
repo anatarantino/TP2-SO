@@ -400,6 +400,13 @@ void wait(uint64_t pid){
       }
 }
 
+uint64_t currentProcessPid(){
+    if(currentProcess){
+        return currentProcess->control_block.pid;
+    }
+    return 0;
+}
+
 uint64_t getInput(){
     return currentProcess->control_block.input;
 }

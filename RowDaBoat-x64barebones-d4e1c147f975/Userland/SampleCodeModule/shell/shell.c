@@ -98,7 +98,7 @@ static t_command functions[] = {
     {&testPriority, "testPriority","testPriority -> tests scheduler priority."},
 };
 
-void startShell(int argc, char *argv[]){
+int startShell(int argc, char *argv[]){
     char c=0;
     cleanBuffer();
     if(flag){

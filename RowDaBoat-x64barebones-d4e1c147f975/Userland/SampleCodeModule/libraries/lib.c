@@ -2,6 +2,7 @@
 #include <strings.h>
 #include <syscall.h>
 
+
 uint64_t* getRegisters(){
 	return (uint64_t *)syscalls(REGISTERS,0,0,0,0,0,0);
 }

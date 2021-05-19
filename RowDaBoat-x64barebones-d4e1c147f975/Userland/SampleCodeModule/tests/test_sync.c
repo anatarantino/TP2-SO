@@ -13,10 +13,18 @@
 int64_t global;  //shared memory
 
 static void slowInc(int64_t *p, int64_t inc){
+  sleep(30);
+  printf("entre al slowinc con el inc: ");
+  printInt2(inc);
+  newln();
+  
   int64_t aux = *p;
   aux += inc;
   yield();
   *p = aux;
+  printf("el global ahora esta en: ");
+  printInt2(*p);
+  newln();
 }
 
 static int inc(int args, char **argv){
@@ -50,11 +58,11 @@ static int inc(int args, char **argv){
   } 
   if(sem){
     printf("SYNC Final value: ");
-    printInt(global);
+    printInt2(global);
     newln();
   }else{
     printf("NO SYNC Final value: ");
-    printInt(global);
+    printInt2(global);
     newln();
   }
   return 0;
@@ -92,8 +100,8 @@ void test_no_sync(){
   char * argv2[]={"inc","1","-1","100000"};
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    addProcess(&inc, 4, argv1, 0, 0);
-    addProcess(&inc, 4, argv2, 0, 0);
+    addProcess(&inc,4,argv1,0,0);
+    addProcess(&inc,4,argv2,0,0);
   }
 }
 

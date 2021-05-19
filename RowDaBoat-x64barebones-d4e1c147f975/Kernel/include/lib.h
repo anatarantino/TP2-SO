@@ -12,6 +12,10 @@ uint64_t getRSP();
 
 void callTimerTick();
 
-int exchange(uint8_t * lock, uint8_t value);
+//int exchange(uint8_t * lock, uint8_t value);
+
+extern void enter_region(uint8_t * lock);
+
+extern void leave_region(uint8_t * lock);
 
 #endif

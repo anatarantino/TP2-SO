@@ -20,4 +20,6 @@ void read(char *buff);
 char* strcat(char* destination, char* source);
 char * strcopy(char * dest,char* src);
 int atoi(char * s);
+char *itoa(int value, char *buffer, int base);
+
 #endif

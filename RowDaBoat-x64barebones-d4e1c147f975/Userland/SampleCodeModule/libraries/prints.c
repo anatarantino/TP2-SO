@@ -42,6 +42,12 @@ void printInt(uint64_t num){
     printf(buff);
 }
 
+void printInt2(int num){
+    char buffer[10];
+    itoa(num, buffer, 10);
+    printf(buffer);
+}
+
 void clearScreen(){
 	syscalls(CLEAR,0,0,0,0,0,0);
 }

@@ -9,7 +9,7 @@ typedef struct t_command {
     char *description;
 }t_command;
 
-void startShell(int argc, char *argv[]);
+int startShell(int argc, char *argv[]);
 void invalidAmount();
 
 #endif

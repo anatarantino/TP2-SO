@@ -4,6 +4,8 @@ GLOBAL getRSP
 GLOBAL callTimerTick
 GLOBAL start
 GLOBAL exchange
+GLOBAL enter_region
+GLOBAL leave_region
 
 section .text
 
@@ -96,4 +98,19 @@ callTimerTick:
 exchange:
 	mov rax,rsi
 	xchg [rdi],eax
+	ret
+
+enter_region:
+	push rax
+	.loop:
+		mov al, 1
+		xchg al, [rdi]
+		cmp al,0
+		jne .loop
+
+		pop rax
+		ret
+
+leave_region:
+	mov byte [rdi],0
 	ret
