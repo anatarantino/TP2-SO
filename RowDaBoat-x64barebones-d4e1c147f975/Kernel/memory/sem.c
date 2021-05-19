@@ -33,7 +33,7 @@ typedef struct sem_t{
 static int sem_create(char * name, uint64_t value);
 static void pPrint(process_t * process);
 static void exchanging(uint8_t * semval, uint8_t val);
-static void process_enqueue(semList_t * pBlocked, uint64_t pid);
+static void process_enqueue(semList_t * pBlocked, process_t * process);
 static uint64_t process_dequeue(semList_t * pBlocked);
 static int getFreeSem();
 static int sem_index(char * name);
@@ -112,7 +112,7 @@ int sem_wait(int index){
         return -1;
     }
     p->pid = pid;
-    process_enqueue(sem->pBlocked, pid);
+    process_enqueue(sem->pBlocked, p);
     leave_region(&sem->lock);
     block(pid);
 
@@ -208,20 +208,14 @@ static void pPrint(process_t * process){
 //     while(exchange(semval,val) != 0);
 // }
 
-static void process_enqueue(semList_t * pBlocked, uint64_t pid){
-    if(pBlocked == NULL){
-        return;
-    }
-    process_t * process = memalloc(sizeof(process_t));
-    process->pid = pid;
-    process->next = NULL;
+static void process_enqueue(semList_t * pBlocked, process_t * process){
 
-    if(pBlocked->first == NULL){
+    if(pBlocked->size == 0){
         pBlocked->first = process;
         pBlocked->last = pBlocked->first;
     } else {
-        process_t * last = pBlocked->last;
-        last->next = NULL;
+        pBlocked->last->next = process;
+        process->next = NULL;
         pBlocked->last = process;
     }
     pBlocked->size++;

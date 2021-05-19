@@ -13,12 +13,10 @@
 int64_t global;  //shared memory
 
 static void slowInc(int64_t *p, int64_t inc){
-  
   int64_t aux = *p;
   aux += inc;
   yield();
   *p = aux;
-  
 }
 
 static int inc(int args, char **argv){
@@ -63,6 +61,7 @@ static int inc(int args, char **argv){
 }
 
 void test_sync(){
+
   uint64_t i;
 
   global = 0;
