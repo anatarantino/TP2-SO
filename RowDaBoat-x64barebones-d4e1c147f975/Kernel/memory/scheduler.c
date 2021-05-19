@@ -24,6 +24,8 @@ typedef struct pcb{
     uint64_t rsp;
     uint64_t rbp;
     uint64_t foreground;
+    uint64_t input;
+    uint64_t output;
 }pcb;
 
 typedef struct process_node {
@@ -43,7 +45,7 @@ static process_node* dequeue();
 static void remove(process_node* process);
 static int isEmpty();
 static process_node* getProcess(uint64_t pid);
-static uint64_t initializeProcess(pcb * process, char* argv, uint8_t fg);
+static uint64_t initializeProcess(pcb * process, char* argv, uint8_t fg, uint16_t * fd);
 static void initializeStackFrame(uint64_t rbp,int (*process)(int, char **),int argc, char** argv);
 static uint64_t newPid();
 static void printProcess(pcb block);
@@ -94,7 +96,7 @@ uint64_t scheduler(uint64_t rsp){
     return currentProcess->control_block.rsp;
 }
 
-uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg){
+uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg, uint16_t * fd){
     if(process == NULL){
         return 0;
     }
@@ -104,7 +106,7 @@ uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg
     if(newProcess == NULL){
         return 0;
     }
-    if(initializeProcess(&newProcess->control_block,argv[0],fg) == ERROR){
+    if(initializeProcess(&newProcess->control_block,argv[0],fg,fd) == ERROR){
         return 0;
     }
 
@@ -128,7 +130,7 @@ uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg
     return newProcess->control_block.pid;
 }
 
-static uint64_t initializeProcess(pcb * process, char* argv, uint8_t fg){
+static uint64_t initializeProcess(pcb * process, char* argv, uint8_t fg, uint16_t * fd){
     strcopy(process->name,argv);
     process->pid = newPid();
     int flag;
@@ -165,6 +167,13 @@ static uint64_t initializeProcess(pcb * process, char* argv, uint8_t fg){
     process->rbp = process->rbp + SIZE_OF_STACK - 1;
     process->rsp = (uint64_t)((stackFrame *)process->rbp - 1);
     process->state = READY;
+    if(fd){
+        process->input = fd[0];
+        process->output = fd[1];
+    }else{
+        process->input = 0;
+        process->output = 0;
+    }
 
     return 0;
 }
@@ -389,4 +398,12 @@ void wait(uint64_t pid){
             p->control_block.foreground=1;
             block(currentProcess->control_block.pid);
       }
+}
+
+uint64_t getInput(){
+    return currentProcess->control_block.input;
+}
+
+uint64_t getOutput(){
+    return currentProcess->control_block.output;
 }

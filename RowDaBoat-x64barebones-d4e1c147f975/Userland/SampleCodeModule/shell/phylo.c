@@ -92,7 +92,7 @@ static int initializePhylo(int phyloCount){
         printf("Added to table phylosopher ");
         printInt(i+1);
         newln();
-        phylos[i].pid=addProcess((i % 2 == 0)? rightPhylo : leftPhylo, 2, arguments, 0);
+        phylos[i].pid=addProcess((i % 2 == 0)? rightPhylo : leftPhylo, 2, arguments, 0, 0);
     }
     return 1;
 }
@@ -206,7 +206,7 @@ static void addPhylo(){
     printInt(phylo+1);
     newln();
     char* arguments[]={phy_name,phy_id};
-    phylos[phylo].pid=addProcess((phylo % 2 == 0)? rightPhylo : leftPhylo, 2, arguments, 0);
+    phylos[phylo].pid=addProcess((phylo % 2 == 0)? rightPhylo : leftPhylo, 2, arguments, 0, 0);
 
 }
 

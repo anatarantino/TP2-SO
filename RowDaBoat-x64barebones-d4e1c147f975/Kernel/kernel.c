@@ -68,7 +68,7 @@ int main(){
     initializeSch();
 
 	char* argv[] = {"Sample Code Module"};
-	addProcess(sampleCodeModuleAddress,1,argv,1);
+	addProcess(sampleCodeModuleAddress,1,argv,1,0);
 	printf("antes del halt\n");
 	_hlt();
 	printf("esto no lo tendria que ver\n");

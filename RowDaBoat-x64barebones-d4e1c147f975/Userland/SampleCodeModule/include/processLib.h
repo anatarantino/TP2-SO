@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-uint64_t addProcess(int (*fn)(int, char **), int argc, char ** argv, uint8_t fg);
+uint64_t addProcess(int (*fn)(int, char **), int argc, char ** argv, uint8_t fg, uint16_t * fd);
 void printProcess();
 uint64_t blockProcess(uint64_t pid);
 uint64_t unblockProcess(uint64_t pid);
