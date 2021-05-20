@@ -177,7 +177,7 @@ void sem_changeValue(int index, uint64_t value){
 }
 
 void sems_print(){
-    printf("\nNAME   VALUE    BLOCKED PROCESSES PID'S\n");
+    printf("\nNAME\t\t\t\tINDEX\t\t\t\tVALUE\t\t\t\tTOTAL PROCESSES\t\t\t\tBLOCKED PROCESSES PID'S\n");
     for(int i=0; i<SEM_MAX; i++){
         sem_print(i);
     }
@@ -185,14 +185,20 @@ void sems_print(){
 
 void sem_print(int index){
     sem_t * sem = &sems[index];
-    enter_region(&sem->lock);
-    printf(sem->name);
-    printf("\t\t\t");
-    printInt(sem->value);
-    printf("\t\t\t");
-    pPrint(sem->pBlocked->first);
-    printNewLine();
-    leave_region(&sem->lock);
+    if(sem->isOn){
+        enter_region(&sem->lock);
+        printf(sem->name);
+        printf("\t\t\t\t\t");
+        printInt(index);
+        printf("\t\t\t\t\t");
+        printInt(sem->value);
+        printf("\t\t\t\t\t\t\t");
+        printInt(sem->pcount);
+        printf("\t\t\t\t\t\t\t\t");
+        pPrint(sem->pBlocked->first);
+        printNewLine();
+        leave_region(&sem->lock);
+    }
 }
 
 static void pPrint(process_t * process){
