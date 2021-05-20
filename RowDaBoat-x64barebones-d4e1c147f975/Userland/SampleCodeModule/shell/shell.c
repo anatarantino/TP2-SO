@@ -22,7 +22,6 @@
 
 enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE,PSS,LOOPS,KILLS,NICES,BLOCKS,UNBLOCKS, MEMS, SEMS, CATS, WCS, FILTERS, PIPES, PHYLOS};
 
-//static char * commands[] = {"inforeg","printmem","time","chess","help","clear","divByZeroException","opCodeException","ps","loop","kill","nice","block","unblock", "mem", "sem", "cat", "wc", "filer", "pipe", "phylo"};
 static char * user = "grupo6@user:~$ ";
 
 static char * registers[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ", "R9:  ",
@@ -97,7 +96,7 @@ static t_command functions[] = {
     {&testPriority, "testPriority","testPriority -> tests scheduler priority."},
 };
 
-int startShell(int argc, char *argv[]){
+int startShell(int argc, char *arguments[]){
     char c=0;
     cleanBuffer();
     if(flag){
@@ -141,16 +140,17 @@ static int getCommand(char * name){
 }
 
 static void processCommand(){
-    char * argv[TOTAL_ARGUMENTS] = {0};
-    int totArgs = strtok(buff,' ', argv, TOTAL_ARGUMENTS);
+    char * arguments[TOTAL_ARGUMENTS] = {0};
+    int args = strtok(buff,' ', arguments, TOTAL_ARGUMENTS);
     uint8_t fg = 1;
 
-    if(argv[totArgs - 1][0] == '&') {
+    if(arguments[args - 1][0] == '&') {
         fg = 0;
-        totArgs--;
+        args--;
     }
 
-    int command_index = getCommand(argv[0]);
+    int command_index = getCommand(arguments[0]);
+    
     if(command_index == -1){
         newln();
         printColor("Invalid command",RED,BLACK);
@@ -158,7 +158,7 @@ static void processCommand(){
         return;
     }
     flag = 1;
-    addProcess((int (*)(int,char**))functions[command_index].command,totArgs,argv,fg, 0);
+    addProcess((int (*)(int,char**))functions[command_index].command,args,arguments,fg, 0);
 }
 
 static void removeChar(){
@@ -311,7 +311,6 @@ static void help(int args, char *arguments[]){
 static void clear(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
     clearScreen();
@@ -440,7 +439,6 @@ static void printu(){
 static void mem(int args, char *arguments[]){
     if(args!=1){
         invalidAmount();
-        newln();
         return;
     }
     newln();
