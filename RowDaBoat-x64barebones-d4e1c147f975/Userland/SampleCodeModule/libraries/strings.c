@@ -23,17 +23,14 @@ int strlen(char * str){
 
 int stringcmp(char * str1, char * str2){ 
     int index=0;
-    while (str1[index]!=0 && str2[index]!=0)
+    while (str1[index]!=0 && str2[index]!=0 && str1[index]==str2[index])
     {
-      if(str1[index]!=str2[index]){
-        return 0;
-      }
       index++;
     }
-    if(str1[index]==0 && str2[index]==0){
-        return 1;
+    if(str1[index]==str2[index]){
+        return 0;
     }
-    return 0;
+    return str1[index] > str2[index]? 1 : -1;
 }
 
 int scanf(const char* format,...){     //scanf("%d %d %f",&num1, &num2, &num3);

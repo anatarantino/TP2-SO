@@ -19,8 +19,8 @@ char pread(int index){
     return syscalls(PIPE_READ,index,0,0,0,0,0);
 }
 
-int pwrite(int index, char c){
-    return syscalls(PIPE_WRITE,index,c,0,0,0,0);
+int pwrite(int index, char *c){
+    return syscalls(PIPE_WRITE,index,(uint64_t)c,0,0,0,0);
 }
 
 void plist(){
@@ -36,7 +36,7 @@ void catFunc(){
 
 void wcFunc(){
     int c;
-    int lines = 1;
+    int lines = 0;
     while((c=getChar()) != -1){
         putChar(c);
         if(c == '\n'){

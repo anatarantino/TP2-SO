@@ -17,9 +17,9 @@ uint64_t syscallDispatcher(t_registers * r){
         switch (r->rax)
         {
             case READ:
-                return getChar();
+                return getCharP();
             case WRITE:
-                syscallWrite((char *) r->rdi,(uint64_t) r->rsi, (uint64_t) r->rdx, (uint64_t) r->r10);
+                printfP((char *) r->rdi,(uint64_t) r->rsi, (uint64_t) r->rdx, (uint64_t) r->r10);
                 break;
             case SCREEN:
                 initializeVideo((uint64_t) r->rdx, (uint64_t) r->r10);
@@ -93,7 +93,7 @@ uint64_t syscallDispatcher(t_registers * r){
             case PIPE_READ:
                 return pread((uint64_t)r->rdi);
             case PIPE_WRITE:
-                return pwrite((uint64_t)r->rdi, (char)r->rsi);
+                return pwriteStr((uint64_t)r->rdi, (char *)r->rsi);
             case PIPE_LIST:
                 plist();
                 break;

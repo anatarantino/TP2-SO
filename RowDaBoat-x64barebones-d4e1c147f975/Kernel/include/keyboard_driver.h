@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+int initializeKD();
 void keyboard_handler(uint64_t rsp);
 char getChar();
 uint64_t * returnReg();

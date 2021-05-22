@@ -59,15 +59,15 @@ void putCharColor(char c,uint64_t f_color,uint64_t bg_color){
 
 
 void printf(char* str){
-    syscallWrite(str,strlen(str),WHITE,BLACK);
+    syscallWrite(str,strleng(str),WHITE,BLACK);
 }
 
 void printColor(char* str, uint64_t f_color, uint64_t bg_color){
-    syscallWrite(str,strlen(str),f_color,bg_color);
+    syscallWrite(str,strleng(str),f_color,bg_color);
 }
 
 void printColorOnPos(char *str, uint64_t f_color, uint64_t bg_color, uint32_t posX, uint32_t posY){
-    syscallWriteOnCurrentPos(str,strlen(str),f_color,bg_color,posX,posY);
+    syscallWriteOnCurrentPos(str,strleng(str),f_color,bg_color,posX,posY);
 }
 
 void printNewLine(){

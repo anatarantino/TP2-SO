@@ -5,7 +5,7 @@
 #include <scheduler.h>
 #include <prints.h>
 
-#define SEM_MAX 20
+#define SEM_MAX 30
 #define ERROR -1
 #define LOCK 1
 #define UNLOCK 0
@@ -30,7 +30,7 @@ typedef struct sem_t{
     semList_t * pBlocked;
 } sem_t;
 
-static int sem_create(char * name, uint64_t value);
+static int sem_create(char * name, uint64_t count);
 static void pPrint(process_t * process);
 static void process_enqueue(semList_t * pBlocked, process_t * process);
 static uint64_t process_dequeue(semList_t * pBlocked);
@@ -41,8 +41,8 @@ static void freeList(semList_t * pblocked);
 static sem_t sems[SEM_MAX];
 static uint8_t globalLock;
 
-static int sem_create(char * name, uint64_t value){
-    if(name == NULL){
+static int sem_create(char * name, uint64_t count){
+    if(name == NULLP){
         return ERROR;
     }
 
@@ -53,22 +53,22 @@ static int sem_create(char * name, uint64_t value){
 
     sem_t * sem = &sems[index]; //lo creo en el index que encontre
     strcopy(sem->name, name);
-    sem->value = value;
+    sem->value = 0;
     sem->lock = UNLOCK;
-    sem->pcount = 0;
+    sem->pcount = count;
     sem->isOn = 1;
     sem->pBlocked = memalloc(sizeof(semList_t));
-    if(sem->pBlocked == NULL){
+    if(sem->pBlocked == NULLP){
         return ERROR;
     }
-    sem->pBlocked->first = NULL;
-    sem->pBlocked->last = NULL;
+    sem->pBlocked->first = NULLP;
+    sem->pBlocked->last = NULLP;
     sem->pBlocked->size = 0;
     return index;
 }
 
-int sem_open(char * name, uint64_t value){
-    if(name == NULL){
+int sem_open(char * name, uint64_t count){
+    if(name == NULLP){
         return ERROR;
     }
     int index;
@@ -78,14 +78,14 @@ int sem_open(char * name, uint64_t value){
     index = sem_index(name);
 
     if(index == -1){ //el semeaforo no existe y lo debo crear
-        index = sem_create(name, value); 
+        index = sem_create(name, count); 
         if(index == -1){ //si no puedo crear otro semaforo retorno error
             leave_region(&globalLock);
             return ERROR;
         }   
     }
 
-    sems[index].pcount++;
+    sems[index].value++;
     leave_region(&globalLock);
     return index;
 }
@@ -99,14 +99,14 @@ int sem_wait(int index){
 
     enter_region(&sem->lock);
 
-    if(sem->value > 0){
-        sem->value--;
+    if(sem->pcount > 0){
+        sem->pcount--;
         leave_region(&sem->lock);
         return 1;
     }
-    uint64_t pid = currentProcessPid();
+    uint64_t pid = getPid();
     process_t * p = memalloc(sizeof(process_t));
-    if(p == NULL){
+    if(p == NULLP){
         leave_region(&sem->lock);
         return -1;
     }
@@ -128,8 +128,8 @@ int sem_post(int index){
         return -1;
     }
     enter_region(&sem->lock);
-    if(sem->value > 0 || (sem->pBlocked->size == 0) ) {
-        sem->value++;
+    if(sem->pcount > 0 || (sem->pBlocked->size == 0) ) {
+        sem->pcount++;
         leave_region(&sem->lock);
         return 1;
     }
@@ -151,9 +151,9 @@ int sem_close(int index){
 
     enter_region(&sem->lock);
 
-    sem->pcount--;
+    sem->value--;
 
-    if(sem->pcount > 0){
+    if(sem->value > 0){
         leave_region(&sem->lock);
         return 1;
     }
@@ -215,7 +215,7 @@ static void process_enqueue(semList_t * pBlocked, process_t * process){
         pBlocked->last = pBlocked->first;
     } else {
         pBlocked->last->next = process;
-        process->next = NULL;
+        process->next = NULLP;
         pBlocked->last = process;
     }
     pBlocked->size++;
@@ -234,7 +234,7 @@ static uint64_t process_dequeue(semList_t * pBlocked){
 }
 
 static int getFreeSem(){
-    for(uint32_t i=0 ; i < SEM_MAX ; i++){
+    for(int i=0 ; i < SEM_MAX ; i++){
         if(!sems[i].isOn){
             return i;
         }
@@ -245,7 +245,7 @@ static int getFreeSem(){
 static int sem_index(char * name){
     for(int i = 0; i < SEM_MAX ; i++){
         if(sems[i].isOn){
-            if(strcmp(sems[i].name,name) == 0){
+            if(strcomp(sems[i].name,name) == 0){
                 return i;
             }
         }
@@ -257,7 +257,7 @@ static void freeList(semList_t * pblocked){
     process_t * p = pblocked->first;
     process_t * aux;
     int i = 0;
-    while(p != NULL && i < pblocked->size){
+    while(p != NULLP && i < pblocked->size){
         aux = p;
         p = p->next;
         memfree(aux);

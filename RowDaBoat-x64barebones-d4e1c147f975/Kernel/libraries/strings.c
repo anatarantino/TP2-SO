@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 
-int strlen(char * str){
+int strleng(char * str){
     int i = 0;
     while(str[i]!= 0){
         i++;
@@ -98,14 +98,14 @@ char * strcopy(char * dest,char* src){
 		return 0;
 	}
 	int i;
-	for(i=0 ; i<strlen(src) ; i++){
+	for(i=0 ; i<strleng(src) ; i++){
 		dest[i] = src[i];
 	}
 	dest[i]=0;
 	return dest;
 }
 
-int strcmp(char * firstString,char* secondString){
+int strcomp(char * firstString,char* secondString){
 	if(firstString == 0 || secondString == 0){
 		return 1;
 	}
@@ -127,10 +127,10 @@ char * strcopycat(char * dest,char* src, char* cat){
 		return 0;
 	}
 	int i,j;
-	for(i=0 ; i<strlen(src) ; i++){
+	for(i=0 ; i<strleng(src) ; i++){
 		dest[i] = src[i];
 	}
-	for(j=0; j<strlen(cat); j++){
+	for(j=0; j<strleng(cat); j++){
 		dest[i+j] = cat[j];
 	}
 	dest[i+j]=0;

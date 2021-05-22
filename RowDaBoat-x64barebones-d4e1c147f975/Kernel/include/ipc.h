@@ -22,15 +22,17 @@ typedef struct pipe_node{
 
 typedef struct pipes_array{
     pipe_node parray[PIPES_MAX];
-    int newPipe;
-    int endPipe; 
+    int lockPipe;
 } pipes_array;
 
 int pinit();
 int popen(char * name);
 int pclose(int index);
 char pread(int index);
-int pwrite(int index, char c);
+int pwriteChar(int index, char c);
+int pwriteStr(int index, char * str);
 void plist();
+char getCharP();
+void printfP(char* str, uint8_t length, uint64_t f_color, uint64_t bg_color);
 
 #endif

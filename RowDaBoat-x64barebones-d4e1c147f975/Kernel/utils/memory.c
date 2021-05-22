@@ -33,18 +33,18 @@ void initializeMem(void * base,uint64_t size){
     }
     free_p = base_p;
     free_p->s.size = memory_size / HEADER_SIZE;
-    free_p->s.next = NULL;
+    free_p->s.next = NULLP;
 }
 
 void * memalloc(uint32_t nbytes){
     if(nbytes == 0){
-        return NULL;
+        return NULLP;
     }
     uint32_t size_needed = (nbytes + HEADER_SIZE - 1) / HEADER_SIZE + 1;
     Header * current;
     Header * previous = free_p;
     uint32_t csize;
-    for(current = previous ; current != NULL ; previous = current , current = current->s.next ){
+    for(current = previous ; current != NULLP ; previous = current , current = current->s.next ){
         csize = current->s.size;
         if(csize >= size_needed){
             if(csize > size_needed){
@@ -62,20 +62,20 @@ void * memalloc(uint32_t nbytes){
             return (void *)(current + 1);
         }
     }
-    return (void *) NULL;
+    return (void *) NULLP;
 }
 
 void memfree(void * ptr){
-    if(ptr == NULL){
+    if(ptr == NULLP){
         return;
     }
     Header * aux = (Header *) ptr - 1;
     if(aux < base_p || aux >= (base_p + memory_size * HEADER_SIZE) || ( ((char *)aux - (char *)base_p) % HEADER_SIZE !=0  )){
         return;
     }
-    if(free_p == NULL){
+    if(free_p == NULLP){
         base_p = aux;
-        base_p->s.next = NULL;
+        base_p->s.next = NULLP;
         return;
     }
     if(aux < free_p){
@@ -85,7 +85,7 @@ void memfree(void * ptr){
     }
 
     Header * current = free_p;
-    while(current->s.next != NULL && !(current < aux && aux < current->s.next)){
+    while(current->s.next != NULLP && !(current < aux && aux < current->s.next)){
         current = current->s.next;
     }
     memory_size += aux->s.size;
@@ -99,7 +99,7 @@ void memdata(){
     Header * curr = free_p;
 
     printColor("Memory information:\n",VIOLET,BLACK);
-    while(curr != NULL){
+    while(curr != NULLP){
         printColor("Block number: ",YELLOW,BLACK);
         printInt(index);
         printNewLine();
@@ -114,7 +114,7 @@ void memdata(){
 }
 
 static void blockManager(Header * left, Header * right){
-    if(left == NULL || (right != NULL && left >= right)) {
+    if(left == NULLP || (right != NULLP && left >= right)) {
         return;
     }
     if( left + left->s.size == right){

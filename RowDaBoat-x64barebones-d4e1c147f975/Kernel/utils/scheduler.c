@@ -59,14 +59,14 @@ static uint64_t last_pid = 1;
 
 void initializeSch(){
     processes = memalloc(sizeof(process_list));
-    processes->first=NULL;
-    processes->last=NULL;
+    processes->first=NULLP;
+    processes->last=NULLP;
     processes->size=0;
     processes->pready=0;
 }
 
 uint64_t scheduler(uint64_t rsp){
-    if(currentProcess!=NULL){
+    if(currentProcess!=NULLP){
        if(currentProcess->control_block.state==READY && ticksLeft>0){
            ticksLeft--;
            return rsp;
@@ -77,7 +77,7 @@ uint64_t scheduler(uint64_t rsp){
             enqueue(currentProcess);
         }else{
             process_node* parent=getProcess(currentProcess->control_block.ppid);
-            if(parent!=NULL && parent->control_block.state==BLOCKED && currentProcess->control_block.foreground){
+            if(parent!=NULLP && parent->control_block.state==BLOCKED && currentProcess->control_block.foreground){
                 unblock(parent->control_block.pid);
             }
             remove(currentProcess);
@@ -100,13 +100,13 @@ uint64_t scheduler(uint64_t rsp){
 }
 
 uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg, uint16_t * fd){
-    if(process == NULL){
+    if(process == NULLP){
         return 0;
     }
 
     process_node * newProcess = memalloc(sizeof(process_node));
 
-    if(newProcess == NULL){
+    if(newProcess == NULLP){
         return 0;
     }
     if(initializeProcess(&newProcess->control_block,argv[0],fg,fd) == 1){
@@ -117,8 +117,8 @@ uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg
     int size;
 
     for(int i=0; i<argc; i++){
-        size = strlen(argv[i]);
-        copy[i] = memalloc(sizeof(char) * (size +1));
+        size = strleng(argv[i]);
+        copy[i] = memalloc(sizeof(char) * size +1);
         strcopy(copy[i],argv[i]);
     }
 
@@ -137,7 +137,7 @@ static int initializeProcess(pcb * process, char* argv, uint8_t fg, uint16_t * f
     strcopy(process->name,argv);
     process->pid = newPid();
 
-    if(currentProcess == NULL){
+    if(currentProcess == NULLP){
         process->ppid = 0;
     }else{
         process->ppid = currentProcess->control_block.pid;
@@ -146,7 +146,7 @@ static int initializeProcess(pcb * process, char* argv, uint8_t fg, uint16_t * f
     if(fg > 1){
         return 1;
     }
-    if(currentProcess == NULL){
+    if(currentProcess == NULLP){
         process->foreground = fg;
     }else{
         if(currentProcess->control_block.foreground){
@@ -158,7 +158,7 @@ static int initializeProcess(pcb * process, char* argv, uint8_t fg, uint16_t * f
     }
 
     process->rbp = (uint64_t) memalloc(SIZE_OF_STACK);
-    if(process->rbp == NULL){
+    if(process->rbp == NULLP){
         return 1;
     }
     if(process->foreground){
@@ -214,31 +214,31 @@ static uint64_t newPid(){
 }
 
 static process_node* getProcess(uint64_t pid){
-    if(currentProcess != NULL && currentProcess->control_block.pid == pid){
+    if(currentProcess != NULLP && currentProcess->control_block.pid == pid){
         return currentProcess;
     }
 
     process_node* node=processes->first;
 
-    while(node != NULL){
+    while(node != NULLP){
         if(node->control_block.pid == pid){
             return node;
         }
         node=node->next;
     }
 
-    return NULL;
+    return NULLP;
 
 }
 
 void ps(){
     printf("\nPID   PRIORITY    STACK POINTER   BASE POINTER    FOREGROUND     STATE     NAME\n");
 
-    if(currentProcess != NULL){
+    if(currentProcess != NULLP){
         printProcess(currentProcess->control_block);
     }
 
-    for (process_node * node = processes->first; node != NULL; node = node->next) {
+    for (process_node * node = processes->first; node != NULLP; node = node->next) {
         printProcess(node->control_block);
     }
 
@@ -257,13 +257,13 @@ uint64_t kill(uint64_t pid){
 
 void nice(uint64_t pid, uint64_t newPrio){
     process_node* node = getProcess(pid);
-    if (newPrio <= MAXPRIO && node != NULL) {
+    if (newPrio <= MAXPRIO && node != NULLP) {
         node->control_block.prio = newPrio;
     }
 }
 
 uint64_t getPid(){
-    if(currentProcess != NULL){
+    if(currentProcess){
         return currentProcess->control_block.pid;
     }
 
@@ -295,7 +295,7 @@ static void printProcess(pcb block){
 
 static int changeState(uint64_t pid, int state){
     process_node * process = getProcess(pid);
-    if(process == NULL || process->control_block.state == KILLED){
+    if(process == NULLP || process->control_block.state == KILLED){
         return -1;
     }
 
@@ -335,7 +335,7 @@ uint64_t block(uint64_t pid){
 static void enqueue(process_node* process){
     if(!isEmpty()){
         processes->last->next=process;
-        process->next=NULL;
+        process->next=NULLP;
         processes->last=process;
     }else{
         processes->first=process;
@@ -350,7 +350,7 @@ static void enqueue(process_node* process){
 
 static process_node* dequeue(){
     if(isEmpty()){
-        return NULL;
+        return NULLP;
     }
 
     process_node* first=processes->first;
@@ -374,7 +374,7 @@ static int isEmpty(){
 }
 
 void killLoop(){ //chequear
-    if (currentProcess != NULL && currentProcess->control_block.state == READY){
+    if (currentProcess != NULLP && currentProcess->control_block.foreground && currentProcess->control_block.state == READY){
         kill(currentProcess->control_block.pid);
         return;
     }
@@ -401,17 +401,10 @@ void yield(){
 
 void wait(uint64_t pid){
       process_node * p=getProcess(pid);
-      if (p != NULL) {
+      if (p != NULLP) {
             p->control_block.foreground=1;
             block(currentProcess->control_block.pid);
       }
-}
-
-uint64_t currentProcessPid(){
-    if(currentProcess){
-        return currentProcess->control_block.pid;
-    }
-    return 0;
 }
 
 uint64_t getInput(){
@@ -420,4 +413,8 @@ uint64_t getInput(){
 
 uint64_t getOutput(){
     return currentProcess->control_block.output;
+}
+
+uint64_t getFg(){
+    return currentProcess->control_block.foreground;
 }

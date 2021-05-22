@@ -30,12 +30,14 @@ static char * registers[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: 
 
 
 static char buff[TOTAL_SIZE]={0};
-static int index=0,flag=1;
+static int index=0,flag=1, pcounter=0;
 
 //static functions
 static void printMessage();
 static void analizeChar(char c);
 static void processCommand();
+static int pipes(int index, int args, char *arguments[], int fg);
+static int findPipe(int args, char *arguments[]);
 static void removeChar();
 static void inforeg(int args, char *arguments[]);
 static void printmem(int args, char *arguments[]);
@@ -132,7 +134,16 @@ static void analizeChar(char c){
 
 static int getCommand(char * name){
     for(int i = 0 ; i< TOTAL_COMMANDS ; i++){
-        if(stringcmp(name,functions[i].name) == 1){
+        if(stringcmp(name,functions[i].name) == 0){
+            return i;
+        }
+    }
+    return -1;
+}
+
+static int findPipe(int args, char *arguments[]){
+    for (int i= 0; i < args; i++) {
+        if (stringcmp(arguments[i], "|") == 0) {
             return i;
         }
     }
@@ -144,10 +155,27 @@ static void processCommand(){
     int args = strtok(buff,' ', arguments, TOTAL_ARGUMENTS);
     uint8_t fg = 1;
 
+    int index = findPipe(args, arguments);
+    if(index==0 || index==args){
+        newln();
+        printColor("Invalid pipe\n", RED, BLACK);
+        printu();
+        return;
+    }
+
     if(arguments[args - 1][0] == '&') {
         fg = 0;
         args--;
     }
+    if(index!=-1){
+        if(pipes(index, args, arguments, fg) == -1){
+            printColor("Invalid command in use of pipes", RED, BLACK);
+            printu();
+            return;
+        }
+        return;
+    }
+    
 
     int command_index = getCommand(arguments[0]);
     
@@ -159,6 +187,63 @@ static void processCommand(){
     }
     flag = 1;
     addProcess((int (*)(int,char**))functions[command_index].command,args,arguments,fg, 0);
+}
+
+static int pipes(int index, int args, char *arguments[], int fg){
+    char * argumentsAux[TOTAL_ARGUMENTS] = {0};
+    int argsAux = 0;  
+
+    for (int i = index+1, j=0; i<args; i++,j++) {
+        argumentsAux[j] = arguments[i];
+        argsAux++;
+    }
+
+    int command_index = getCommand(argumentsAux[0]);
+
+    if(command_index == -1){
+        return -1;
+    }
+
+    uint16_t fd[2];
+    int pid[2];
+    static char* shellName = "ShellP";
+    char pipeName[20];
+    uintToBase(pcounter++, pipeName, 10);
+    strcat(pipeName, shellName);
+
+    int pipe = popen(pipeName);
+    if(pipe == -1){
+        printColor("Error opening pipe",RED,BLACK);
+        printu();
+        return -1;
+    }
+    fd[0]=pipe;
+    fd[1]=0;
+    pid[0]=addProcess((int (*)(int,char**))functions[command_index].command,argsAux,argumentsAux,0, fd);
+
+    argsAux=0;
+    for (int i=0; i<index; i++) {
+        argumentsAux[i] = arguments[i];
+        argsAux++;
+    }
+    command_index = getCommand(argumentsAux[0]);
+
+    if(command_index == -1){
+        return -1;
+    }
+    fd[0]=0;
+    fd[1]=pipe;
+    pid[1]=addProcess((int (*)(int,char**))functions[command_index].command,argsAux,argumentsAux,fg, fd);
+
+    if(fg==0){
+        wait(pid[1]);
+    }
+    int c = -1;
+    pwrite(pipe,(char *)&c);
+    wait(pid[0]);
+    pclose(pipe);
+
+    return 0;
 }
 
 static void removeChar(){
@@ -298,6 +383,7 @@ static void printTime(time_type desc){
 
 static void help(int args, char *arguments[]){
     if(args!=1){
+        printf("\nError in help!!!!!\n");
         invalidAmount();
         return;
     }
@@ -467,6 +553,7 @@ static void cat(int args, char *arguments[]){
 
 static void wc(int args, char *arguments[]){
     if(args!=1){
+        printf("\nError in wc!!!!!\n");
         invalidAmount();
         return;
     }

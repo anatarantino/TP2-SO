@@ -6,6 +6,7 @@
 #include <video_driver.h>
 #include <time.h>
 #include <scheduler.h>
+#include <sem.h>
 
 #define SHIFT 1
 #define NOTSHIFT 0
@@ -47,6 +48,14 @@ static char caps = 0;
 char keyToAdd;
 static char is_pressed;
 static char control = 0;
+static int kSem;
+
+int initializeKD(){
+    if((kSem = sem_open("keyboard", 0)) == -1){
+        return -1;
+    }
+    return 0;
+}
 
 void keyboard_handler(uint64_t rsp){ // 0 0 0 0 80
     if(pressed_key()){
@@ -100,6 +109,7 @@ void keyboard_handler(uint64_t rsp){ // 0 0 0 0 80
                                     keyToAdd = pressedKeys[key][0];
                                 }
                             }
+                            //sem_post(kSem);
                             buffer[index++] = keyToAdd;
                         }
                     }
@@ -120,6 +130,7 @@ void keyboard_handler(uint64_t rsp){ // 0 0 0 0 80
 
 char getChar(){
     char c = 0;
+    //sem_wait(kSem);
     while (c==0){
         _hlt();//Espera a que haya una interrupcion
         if(index>0){
@@ -128,6 +139,7 @@ char getChar(){
     }
     return c;
 }
+
 
 char waitCharInterruption(){
     char c=0;

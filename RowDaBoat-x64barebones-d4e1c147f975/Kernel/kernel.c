@@ -13,6 +13,7 @@
 #include <interrupts.h>
 #include <memory.h>
 #include <sem.h>
+#include <ipc.h>
 
 #define HEAP_SIZE (1024*1024*128)
 
@@ -64,6 +65,10 @@ int main(){
 	initExceptionHandler((uint64_t)sampleCodeModuleAddress,getRSP());
 
     initializeMem(sampleCodeModuleHeapAddress,HEAP_SIZE);
+
+	pinit();
+
+	//initializeKD();
 
     initializeSch();
 

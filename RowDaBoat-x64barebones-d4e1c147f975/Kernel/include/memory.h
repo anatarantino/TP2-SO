@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define NULL 0
+#define NULLP 0
 
 void initializeMem(void * base,uint64_t size);
 void * memalloc(uint32_t nbytes);
