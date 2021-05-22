@@ -7,7 +7,7 @@
 #include <processLib.h>
 #include <timeRTC.h>
 
-#define MAX_PHYLO 10
+#define MAX_PHYLO 5
 #define MIN_PHYLO 2
 #define NAME_LEN 10
 #define EATING 1

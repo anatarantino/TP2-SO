@@ -90,7 +90,7 @@ static t_command functions[] = {
     {&wc, "wc","wc -> counts the number of lines in the input.\n"},
     {&filter, "filter","filter -> filter the vowels of the input.\n"},
     {&pipe, "pipe","pipe -> prints all the pipes with their properties.\n"},
-    {&phylo, "phylo","phylo -> dining philosophers problem, receives a starting number of phylosophers (maximum: 10, minimum: 2).\n"},
+    {&phylo, "phylo","phylo -> dining philosophers problem, receives a starting number of phylosophers (maximum: 5, minimum: 2). Phylosophers may be added with 'a' and removed with 'r'.\n"},
     {&testMM, "testMM","testMM -> tests memory manager.\n"},
     {&testSync, "testSync","testSync -> tests semaphore's sync.\n"},
     {&testNoSync, "testNoSync","testNoSync -> tests semaphore's sync.\n"},
