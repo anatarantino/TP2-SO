@@ -19,6 +19,7 @@
 
 static unsigned char pressed(unsigned char key );
 static void updateRegisters(uint64_t * rsp);
+static void addToBuffer(char keyToAdd);
 
 static char pressedKeys[TOTALKEYS][2] =
     {{0, 0}, {0, 0}, {'1', '!'}, {'2', '@'}, 
@@ -89,7 +90,7 @@ void keyboard_handler(uint64_t rsp){ // 0 0 0 0 80
                             killLoop();
                             control=0;
                         }else if(control == 1 && pressedKeys[key][0] == 'd'){
-                            buffer[index++]=-1;
+                            addToBuffer(-1);
                             control=0;
                         }else{
                             if(shift == 1){
@@ -109,8 +110,7 @@ void keyboard_handler(uint64_t rsp){ // 0 0 0 0 80
                                     keyToAdd = pressedKeys[key][0];
                                 }
                             }
-                            //sem_post(kSem);
-                            buffer[index++] = keyToAdd;
+                            addToBuffer(keyToAdd);
                         }
                     }
                 break;
@@ -128,14 +128,16 @@ void keyboard_handler(uint64_t rsp){ // 0 0 0 0 80
     }
 }
 
+static void addToBuffer(char keyToAdd){
+    buffer[index++] = keyToAdd;
+    sem_post(kSem);  
+}
+
 char getChar(){
+    sem_wait(kSem);
     char c = 0;
-    //sem_wait(kSem);
-    while (c==0){
-        _hlt();//Espera a que haya una interrupcion
-        if(index>0){
-            c = buffer[--index];
-        }
+    if(index>0){
+        c = buffer[--index];
     }
     return c;
 }

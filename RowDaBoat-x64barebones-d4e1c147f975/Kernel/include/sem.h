@@ -6,7 +6,7 @@
 #define MAX_LEN 20
 
 
-int sem_open(char * name, uint64_t count);
+int sem_open(char * name, uint64_t value);
 
 int sem_wait(int index);
 

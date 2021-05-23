@@ -175,7 +175,6 @@ static void processCommand(){
         }
         return;
     }
-    
 
     int command_index = getCommand(arguments[0]);
     

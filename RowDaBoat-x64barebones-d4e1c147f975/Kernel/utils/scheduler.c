@@ -51,11 +51,13 @@ static uint64_t newPid();
 static void printProcess(pcb block);
 static int changeState(uint64_t pid, int state);
 static void wrapper(void (*entryPoint)(int, char**), int argc, char** argv);
+static int shellBackup(int argc, char** argv);
 
 static process_list* processes;
 static process_node* currentProcess;
 static uint64_t ticksLeft;
 static uint64_t last_pid = 1;
+static process_node* backupProcess;
 
 void initializeSch(){
     processes = memalloc(sizeof(process_list));
@@ -63,6 +65,10 @@ void initializeSch(){
     processes->last=NULLP;
     processes->size=0;
     processes->pready=0;
+
+    char* argv[] = {"Shell Backup Process"};
+    addProcess(&shellBackup, 1, argv, 1, 0);
+    backupProcess = dequeue();
 }
 
 uint64_t scheduler(uint64_t rsp){
@@ -73,15 +79,18 @@ uint64_t scheduler(uint64_t rsp){
        }
         currentProcess->control_block.rsp=rsp;
 
-        if(currentProcess->control_block.state != KILLED){
-            enqueue(currentProcess);
-        }else{
-            process_node* parent=getProcess(currentProcess->control_block.ppid);
-            if(parent!=NULLP && parent->control_block.state==BLOCKED && currentProcess->control_block.foreground){
-                unblock(parent->control_block.pid);
+        if(currentProcess->control_block.pid != backupProcess->control_block.pid){
+            if(currentProcess->control_block.state != KILLED){
+                enqueue(currentProcess);
+            }else{
+                process_node* parent=getProcess(currentProcess->control_block.ppid);
+                if(parent!=NULLP && parent->control_block.state==BLOCKED && currentProcess->control_block.foreground){
+                    unblock(parent->control_block.pid);
+                }
+                remove(currentProcess);
             }
-            remove(currentProcess);
         }
+        
     }
     if(processes->pready > 0){
         currentProcess=dequeue();
@@ -94,6 +103,9 @@ uint64_t scheduler(uint64_t rsp){
             currentProcess=dequeue();
         }
     }
+    else{
+        currentProcess = backupProcess;
+    }
     
     ticksLeft=currentProcess->control_block.prio;
     return currentProcess->control_block.rsp;
@@ -103,7 +115,6 @@ uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg
     if(process == NULLP){
         return 0;
     }
-
     process_node * newProcess = memalloc(sizeof(process_node));
 
     if(newProcess == NULLP){
@@ -125,8 +136,7 @@ uint64_t addProcess(int (*process)(int,char**),int argc, char** argv, uint8_t fg
     initializeStackFrame(newProcess->control_block.rbp,process,argc,copy);
 
     enqueue(newProcess);
-
-    if(newProcess->control_block.ppid && newProcess->control_block.foreground){
+    if(newProcess->control_block.foreground && newProcess->control_block.ppid){
         block(newProcess->control_block.ppid);
     }
 
@@ -373,7 +383,7 @@ static int isEmpty(){
     return processes->size==0;
 }
 
-void killLoop(){ //chequear
+void killLoop(){
     if (currentProcess != NULLP && currentProcess->control_block.foreground && currentProcess->control_block.state == READY){
         kill(currentProcess->control_block.pid);
         return;
@@ -417,4 +427,11 @@ uint64_t getOutput(){
 
 uint64_t getFg(){
     return currentProcess->control_block.foreground;
+}
+
+static int shellBackup(int argc, char** argv) {
+      while (1){
+            _hlt();
+      }
+      return 0;
 }
