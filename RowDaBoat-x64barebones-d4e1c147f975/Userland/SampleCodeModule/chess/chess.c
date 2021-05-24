@@ -68,7 +68,7 @@ static int pawn(int x0, int y0, int xf, int yf);		// 1 o -1
 
 void playChess(){
 
-	int state;
+	int state=0;
 
 	if(exitFlag == 0){
 		printColorOnPos("PRESS N FOR A NEW GAME OR C TO CONTINUE A PREVIOUS MATCH",GREEN,BLACK,250,300);
@@ -171,7 +171,7 @@ static void makeMove(){
 
 	if(((letra >= 'A' && letra <= 'H') || (letra >= 'a' && letra <= 'h')) && (nro >= '1' && nro<= '8')){
 		
-		if(letra >='A' && letra <= 'H'){
+		if(letra <= 'H'){
 			y0 = letra - 'A';
 		}
 		else{
@@ -190,25 +190,27 @@ static void makeMove(){
 			x0=y0;
 			y0=DIM-1-aux4;
 		}
-
-		if(board[x0][y0] == 0){		// no selecciono ninguna pieza
-			printError(NOPIECE);
-			error = 1;
-		}
-		else{
-			if(whoseTurn == 0){
-				if(board[x0][y0] <0){	// selecciono una pieza negra
-					printError(BLACKPIECE);
-					error = 1;
-				}
+		if(x0>=0 && x0<DIM && y0>=0 && y0<DIM){
+				if(board[x0][y0] == 0){		// no selecciono ninguna pieza
+				printError(NOPIECE);
+				error = 1;
 			}
 			else{
-				if(board[x0][y0] > 0){	// selecciono una pieza blanca
-					printError(WHITEPIECE);
-					error = 1;
+				if(whoseTurn == 0){
+					if(board[x0][y0] <0){	// selecciono una pieza negra
+						printError(BLACKPIECE);
+						error = 1;
+					}
+				}
+				else{
+					if(board[x0][y0] > 0){	// selecciono una pieza blanca
+						printError(WHITEPIECE);
+						error = 1;
+					}
 				}
 			}
 		}
+		
 	}
 	else{
 		printError(INVALIDPOS);
@@ -236,7 +238,7 @@ static void makeMove(){
 		}
 
 		if(((letraF >='A' && letraF <= 'H') || (letraF >= 'a' && letraF <= 'h')) && (nroF >= '1' && nroF <= '8')){
-			if(letraF >='A' && letraF <= 'H'){
+			if(letraF <= 'H'){
 				yf = letraF - 'A';
 			}
 			else{
@@ -490,7 +492,7 @@ static int rook(int x0, int y0, int xf, int yf){
 static int knight(int x0, int y0, int xf, int yf){
 	int move=0;
 	if((xf==x0+2 && (yf==y0+1 || yf == y0-1)) 	||	(xf==x0-2 && (yf==y0+1 || yf == y0-1)) 
-		||	(yf==y0+2 && (xf==x0+1 || xf == x0-1))	||	(yf==y0+2 && (xf==x0+1 || xf == x0-1))){
+		||	(yf==y0+2 && (xf==x0+1 || xf == x0-1))	||	(yf==y0-2 && (xf==x0+1 || xf == x0-1))){
 		move = checkFinalPos(xf,yf);
 	}
 	return move;
@@ -839,7 +841,6 @@ static void initNewGame(){
 	index1=0;
 	index2=0;
 	whoseTurn = 0;		// 0 es el turno de las blancas, 1 es el turno de las negras
-	index1=0,index2=0;
 	segundosW = 0;
 	segundosB = 0;
 	aux = -1;

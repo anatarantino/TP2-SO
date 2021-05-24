@@ -98,7 +98,7 @@ static t_command functions[] = {
     {&testSync, "testSync","testSync -> tests semaphore's sync.\n"},
     {&testNoSync, "testNoSync","testNoSync -> tests semaphore's sync.\n"},
     {&testProcesses, "testProcesses","testProcesses -> tests process creation.\n"},
-    {&testPriority, "testPriority","testPriority -> tests scheduler priority."},
+    {&testPriority, "testPriority","testPriority -> tests scheduler priority.\n"},
 };
 
 int startShell(int argc, char *arguments[]){
@@ -393,6 +393,12 @@ static void help(int args, char *arguments[]){
     for (int i = 0; i < TOTAL_COMMANDS; i++) {
         printf(functions[i].description);
     }
+    printf("\nOther commands:\n");
+    printf("ctrl+r -> Updates register values.\n");
+    printf("ctrl+c -> Kills process running in foreground.\n");
+    printf("ctrl+d -> EOF.\n");
+    printf("command & -> Runs command in background.\n");
+    printf("command1 | command2 -> Pipes command1's output to command2's input.");
     printu();
 }
 

@@ -61,8 +61,7 @@ int scanf(const char* format,...){     //scanf("%d %d %f",&num1, &num2, &num3);
           }
           case 's': {
             character = va_arg(args,char*);
-            char temp;
-            while( (temp = buff[j]) != '\0'){ 
+            while(buff[j] != '\0'){ 
                 *character = buff[j];
                 character++;
                 j++;
