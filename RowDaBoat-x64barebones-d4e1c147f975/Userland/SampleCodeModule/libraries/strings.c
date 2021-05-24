@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include <strings.h>
 #include <stdarg.h>
 #include <syscall.h>
@@ -80,7 +83,7 @@ int scanf(const char* format,...){     //scanf("%d %d %f",&num1, &num2, &num3);
 
 void read(char *buffer){
     int index = 0;
-    char c;
+    int c;
     while ((c = getChar()) != '\n') {
         if(c == '\b'){
             if (index != 0) {

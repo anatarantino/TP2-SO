@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include <syscall.h>
 #include <prints.h>
 #include <strings.h>
@@ -102,7 +105,7 @@ int startShell(int argc, char *arguments[]){
     char c=0;
     cleanBuffer();
     if(flag){
-        for(int i; i<STLINE; i++){
+        for(int i=0; i<STLINE; i++){
             newln();
         }
         printMessage();

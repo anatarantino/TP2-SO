@@ -1,5 +1,9 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include <timeRTC.h>
 #include <syscall.h>
+#include <libasm.h>
 
 uint8_t getTime(time_type descriptor){
     return syscalls(TIMERTC,descriptor,0,0,0,0,0);

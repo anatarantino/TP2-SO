@@ -1,9 +1,12 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #ifndef BUDDY
 
 #include <memory.h>
 #include <prints.h>
 #include <colors.h>
-#define TOTAL_MEM 128*1024*1024
+#define TOTAL_MEM (128*1024*1024)
 #define HEADER_SIZE sizeof(Header)
 
 //esto lo sacamos del libro de C de Kernighan (para el informe)
@@ -108,6 +111,7 @@ void memdata(){
         printNewLine();
         printColor("Free blocks: ",YELLOW,BLACK);
         printInt(curr->s.size);
+        printNewLine();
         curr = curr->s.next;
         index++;
     }

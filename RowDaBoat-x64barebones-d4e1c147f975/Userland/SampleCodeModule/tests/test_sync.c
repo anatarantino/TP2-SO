@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include <tests.h>
 #include <semLib.h>
 #include <processLib.h> 
@@ -69,8 +72,8 @@ void test_sync(){
   printf("CREATING PROCESSES...(WITH SEM)");
   newln();
 
-  char * argv1[]={"inc","1","1","100"};
-  char * argv2[]={"inc","1","-1","100"};
+  char * argv1[]={"inc","1","1","10000"};
+  char * argv2[]={"inc","1","-1","10000"};
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
     addProcess(&inc,4,argv1,0,0);
@@ -86,8 +89,8 @@ void test_no_sync(){
   printf("CREATING PROCESSES...(WITHOUT SEM)");
   newln();
 
-  char * argv1[]={"inc","0","1","100"};
-  char * argv2[]={"inc","0","-1","100"};
+  char * argv1[]={"inc","0","1","10000"};
+  char * argv2[]={"inc","0","-1","10000"};
 
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
     addProcess(&inc,4,argv1,0,0);
