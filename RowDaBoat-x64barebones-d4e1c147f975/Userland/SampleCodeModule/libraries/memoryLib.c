@@ -14,3 +14,7 @@ void memfree(void * address){
 void memdata(){
     syscalls(MEMDATA,0,0,0,0,0,0);
 }
+
+uint64_t * shm_open(uint64_t id, uint64_t size){
+    return (uint64_t *) syscalls(SHM_OPEN,id,size,0,0,0,0);
+}  

@@ -38,9 +38,10 @@
 #define PIPE_LIST 32
 #define WAIT 33
 #define MEMDATA 34
+#define SHM_OPEN 35
 
 #define TOTALREGS 16
-#define CANT_SYS 35
+#define CANT_SYS 36
 
 typedef struct
 {
