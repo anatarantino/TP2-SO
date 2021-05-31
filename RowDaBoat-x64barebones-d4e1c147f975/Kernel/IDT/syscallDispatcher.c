@@ -12,6 +12,7 @@
 #include <scheduler.h>
 #include <sem.h>
 #include <ipc.h>
+#include <sharedMemory.h>
 
 //                          codigo        
 //                          uint64_t rax, uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9
@@ -106,6 +107,8 @@ uint64_t syscallDispatcher(t_registers * r){
             case MEMDATA:
                 memdata();
                 break; 
+            case SHM_OPEN:
+                return (uint64_t)shm_open((uint64_t)r->rdi, (uint32_t)r->rsi); // id, size
         }    
     }
     return 0;

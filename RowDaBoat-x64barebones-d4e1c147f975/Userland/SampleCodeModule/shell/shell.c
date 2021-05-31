@@ -16,14 +16,15 @@
 #include <semLib.h>
 #include <phylo.h>
 #include <tests.h>
+#include <sh_mem_test.h>
 
 #define TOTAL_SIZE 150
-#define TOTAL_COMMANDS 26
+#define TOTAL_COMMANDS 28
 #define TOTAL_REG 17
 #define TOTAL_ARGUMENTS 5
 #define STLINE 43
 
-enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE,PSS,LOOPS,KILLS,NICES,BLOCKS,UNBLOCKS, MEMS, SEMS, CATS, WCS, FILTERS, PIPES, PHYLOS};
+enum comm_num{INFOREG=0,PRINTMEM,TIME,CHESS,HELP,CLEARSC,DIVZERO,OPCODE,PSS,LOOPS,KILLS,NICES,BLOCKS,UNBLOCKS, MEMS, SEMS, CATS, WCS, FILTERS, PIPES, PHYLOS,INC,DEC};
 
 static char * user = "grupo6@user:~$ ";
 
@@ -71,6 +72,8 @@ static void testSync(int args, char *arguments[]);
 static void testNoSync(int args, char *arguments[]);
 static void testProcesses(int args, char *arguments[]);
 static void testPriority(int args, char *arguments[]);
+static void sh_dec(int args, char * arguments[]);
+static void sh_inc(int args, char * arguments[]);
 
 static t_command functions[] = {
     {&help,"help",""},
@@ -99,6 +102,9 @@ static t_command functions[] = {
     {&testNoSync, "testNoSync","testNoSync -> tests semaphore's sync.\n"},
     {&testProcesses, "testProcesses","testProcesses -> tests process creation.\n"},
     {&testPriority, "testPriority","testPriority -> tests scheduler priority.\n"},
+    {&sh_inc,"sh_inc","Test shared memory inc.\n"},
+    {&sh_dec,"sh_dec","Test shared memory dec."}
+
 };
 
 int startShell(int argc, char *arguments[]){
@@ -642,5 +648,29 @@ static void testPriority(int args, char *arguments[]){
         return;
     }
     test_prio();
+    printu();
+}
+
+static void sh_inc(int args, char * arguments[]){
+    if(args!=1){
+        invalidAmount();
+        return;
+    }
+    char * argv1[]={"inc","1","1","10000"};
+    char * argv2[]={"inc","1","-1","10000"};
+    uint8_t fg = 1;
+
+    addProcess(&inc,4,argv1,fg,0);
+    addProcess(&dec,4,argv2,fg,0);
+    
+    printu();
+}
+
+static void sh_dec(int args, char * arguments[]){
+    if(args!=1){
+        invalidAmount();
+        return;
+    }
+
     printu();
 }
